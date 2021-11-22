@@ -48,13 +48,13 @@ int readNoteMapFile() {
 	FILE *f;
 
 	// 맵 폴더 경로 설정 (maps/mapName/)
-	int mapDirSize = strlen(mapPath) + strlen(mapName) + 1 + 1;
+	const int mapDirSize = (int)strlen(mapPath) + (int)strlen(mapName) + 1 + 1;
 	mapDir = (char*)malloc(mapDirSize);
 	sprintf_s(mapDir, mapDirSize, "%s%s/", mapPath, mapName);
 
 	// 맵 파일 경로 설정 (maps/mapName/mapName.txt)
 	const char* extension = ".txt";
-	int pathSize = mapDirSize + strlen(mapName) + strlen(extension);
+	const int pathSize = mapDirSize + (int)strlen(mapName) + (int)strlen(extension);
 	char* path = (char*)malloc(pathSize);
 	if (path == NULL) return -1;
 	sprintf_s(path, pathSize, "%s%s%s", mapDir, mapName, extension);
@@ -134,8 +134,8 @@ void countdown() {
 
 // 노래(BGM)를 재생한다.
 void playSong() {
-	char extension[] = ".wav";
-	const int pathSize = strlen(mapDir) + strlen(mapName) + sizeof(extension);
+	const char extension[] = ".wav";
+	const int pathSize = (int)strlen(mapDir) + (int)strlen(mapName) + sizeof(extension);
 	char* songPath = (char*)malloc(pathSize);
 	if (songPath == NULL) return;
 	sprintf_s(songPath, pathSize, "%s%s%s", mapDir, mapName, extension);

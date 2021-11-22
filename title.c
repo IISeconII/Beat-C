@@ -17,7 +17,7 @@ void title_main() {
 		"#+#    #+# #+#        #+#     #+#     #+#                   #+#    #+#",
 		"#########  ########## ###     ###     ###                    ######## ",
 	};
-	const int titleWid = strlen(title[0]); // 70
+	const int titleWid = (int)strlen(title[0]); // 70
 	const int titleHei = sizeof(title) / sizeof(title[0]); // 7
 
 	for (int i = 0; i < titleHei; i++) {
@@ -25,8 +25,8 @@ void title_main() {
 		puts(title[i]);
 	}
 
-	char anykey[] = "시작하려면 아무 키나 누르세요";
-	gotoxy(SCREEN_WIDTH/2 - strlen(anykey)/2, 4+titleHei+2);
+	const char anykey[] = "시작하려면 아무 키나 누르세요";
+	gotoxy(SCREEN_WIDTH/2 - (int)strlen(anykey)/2, 4+titleHei+2);
 	puts(anykey);
 
 	gotoxy(SCREEN_WIDTH/2, 4+titleHei+3);
