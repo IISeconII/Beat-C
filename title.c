@@ -4,7 +4,7 @@
 
 
 // 타이틀 화면 씬
-void title_main() {
+void main_title() {
 
 	system("cls");
 

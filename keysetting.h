@@ -5,4 +5,4 @@
 #include "main.h"
 
 
-void keysetting_main();
+void main_keysetting();

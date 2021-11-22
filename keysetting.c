@@ -4,7 +4,7 @@
 
 
 // 키를 설정하는 씬
-void keysetting_main() {
+void main_keysetting() {
 	setCursor(BLOCK);
 	gotoxy(1, 1);
 	puts("키 설정");

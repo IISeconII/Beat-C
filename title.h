@@ -5,4 +5,4 @@
 #include "main.h"
 
 
-void title_main();
+void main_title();

@@ -4,7 +4,7 @@
 
 
 // 게임을 플레이하는 씬
-void gameplay_main(char* _mapName) {
+void main_gameplay(char* _mapName) {
 	mapName = _mapName;
 
 	memset(note, x, sizeof(note));
@@ -49,13 +49,13 @@ int readNoteMapFile() {
 
 	// 맵 폴더 경로 설정 (maps/mapName/)
 	const int mapDirSize = (int)strlen(mapPath) + (int)strlen(mapName) + 1 + 1;
-	mapDir = (char*)malloc(mapDirSize);
+	mapDir = malloc(mapDirSize);
 	sprintf_s(mapDir, mapDirSize, "%s%s/", mapPath, mapName);
 
 	// 맵 파일 경로 설정 (maps/mapName/mapName.txt)
 	const char* extension = ".txt";
 	const int pathSize = mapDirSize + (int)strlen(mapName) + (int)strlen(extension);
-	char* path = (char*)malloc(pathSize);
+	char* path = malloc(pathSize);
 	if (path == NULL) return -1;
 	sprintf_s(path, pathSize, "%s%s%s", mapDir, mapName, extension);
 
@@ -74,13 +74,13 @@ int readNoteMapFile() {
 
 	
 	// 맵 읽어서 map에 넣기
-	map = (char**)malloc(mapLength * sizeof(char*));
+	map = malloc(mapLength * sizeof(char*));
 	if (map == NULL) return -1;
 	char* line;
 
 	for (int i = 0; i < mapLength; i++) {
 
-		line = (char*)malloc(LINE * sizeof(char));
+		line = malloc(LINE * sizeof(char));
 		if (line == NULL) return -1;
 
 		for (int j = 0; j < LINE; j++) {
@@ -136,7 +136,7 @@ void countdown() {
 void playSong() {
 	const char extension[] = ".wav";
 	const int pathSize = (int)strlen(mapDir) + (int)strlen(mapName) + sizeof(extension);
-	char* songPath = (char*)malloc(pathSize);
+	char* songPath = malloc(pathSize);
 	if (songPath == NULL) return;
 	sprintf_s(songPath, pathSize, "%s%s%s", mapDir, mapName, extension);
 

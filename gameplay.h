@@ -34,7 +34,7 @@ BOOL gameEnd; // 게임이 끝났는가?
 int shouldRemove[LINE];
 
 
-void gameplay_main(char* _mapName);
+void main_gameplay(char* _mapName);
 int readNoteMapFile();
 void drawScreen();
 void countdown();
