@@ -5,21 +5,23 @@
 
 int main() {
 
-	keysetting_main();
+	main_keysetting();
 
-	title_main();
+	main_title();
 
 	char* mapName;
 	while (1) {
-		mapName = selectmap_main();
+
+		mapName = main_selectmap();
 		if (mapName == NULL) {
 			system("cls");
 			gotoxy(1, 1);
 			puts("맵 리스트를 불러오는 데 실패하였습니다.");
-			Sleep(1000);
+			Sleep(2000);
 			break;
 		}
 
-		gameplay_main(mapName);
+		main_gameplay(mapName);
+		for (int i = 0; i < mapCount; i++) free(mapList[i]); free(mapList);
 	}
 }

@@ -4,7 +4,7 @@
 
 
 // 맵을 선택하는 씬
-char* selectmap_main() {
+char* main_selectmap() {
 
 	system("cls");
 
@@ -13,30 +13,11 @@ char* selectmap_main() {
 	gotoxy(lp, tp);
 	puts("곡을 선택하세요.");
 	
-	int mapCount = 0;
-	if (loadMaps(&mapCount) == -1) return NULL;
+	mapCount = 0;
+	if (loadMaps() == -1) return NULL;
 	
 	if (mapCount == 0) {
 		system("cls");
-
-		static char mapGuideDocs[][82] = { // 맵 제작법 텍스트
-			":( 맵이 없네요..",
-			"",
-			"맵 제작법:",
-			"- 프로그램이 있는 경로에 maps 폴더를 만듭니다. 맵의 기본 경로입니다.",
-			"- 폴더 안에 맵 이름으로 된 폴더를 만듭니다. 이곳에 맵이 담깁니다.",
-			"- 그 안에 맵이름.txt 파일을 만듭니다. 여기에 노트 데이터가 들어갑니다.",
-			"",
-			"노트 데이터는 다음과 같은 형태입니다.",
-			"",
-			"@... @는 노트이고, .은 공백 문자(' ')입니다.",
-			".... (점('.')은 보여주기 위해서 공백 대신 쓴 겁니다)",
-			".@.. 게임이 시작되면 맨 윗 줄부터 노트 문자를 읽어서 게임 화면에 노트를 띄웁니다.",
-			".... // 작성 중",
-			"..@.",
-			"....",
-			"...@",
-		};
 		for (int i = 0; i < sizeof(mapGuideDocs) / sizeof(mapGuideDocs[0]); i++) {
 			gotoxy(lp, tp+i); puts(mapGuideDocs[i]);
 		}
@@ -89,22 +70,19 @@ int selecting(int mapCount)
 		gotoxy(lp, tp+2+pointer); _putch('>');
 	}
 
-
-	for (int i = 0; i < mapCount; i++) free(mapList[i]); free(mapList);
-
 	return pointer;
 }
 
 
 // 맵 리스트 불러와서 maps에 넣기
-int loadMaps(int* mapCount) {
+int loadMaps() {
 
 	// 맵 경로 제작 ("maps/*")
 	static char* dir = NULL;
 	if (dir == NULL) {
-		dir = (char*)malloc(strlen(mapPath) + 1 + 1);
+		dir = malloc(strlen(mapPath)+1+1);
 		if (dir == NULL) return -1;
-		sprintf_s(dir, strlen(dir) + 1 + 1, "%s*", mapPath);
+		sprintf_s(dir, strlen(dir)+1+1, "%s*", mapPath);
 	}
 	
 
@@ -112,7 +90,7 @@ int loadMaps(int* mapCount) {
 	struct _finddata_t fd;
 	intptr_t handle = _findfirst(dir, &fd);
 	if (handle == -1) {
-		*mapCount = 0;
+		mapCount = 0;
 		return 0;
 	}
 
@@ -120,35 +98,37 @@ int loadMaps(int* mapCount) {
 	while (_findnext(handle, &fd) != -1) {
 		if (!strcmp(fd.name, ".."))
 			continue;
-		(*mapCount)++;
+		mapCount++;
 	}
 
 	// 맵 리스트 제작
-	mapList = (char**)malloc(*mapCount * sizeof(char*));
+	mapList = malloc(mapCount * sizeof(char*));
 	if (mapList == NULL) return -1;
 
 	handle = _findfirst(dir, &fd);
-	for (int i = 0; i < *mapCount; i++) {
+	for (int i = 0; i < mapCount; i++) {
 		if (_findnext(handle, &fd) == -1)
 			break;
 		if (!strcmp(fd.name, ".") || !strcmp(fd.name, "..")) {
 			i--;
 			continue;
 		}
-
-		mapList[i] = (char*)malloc(strlen(fd.name)+1);
+		
+		mapList[i] = malloc(strlen(fd.name)+1);
 		if (mapList[i] == NULL) return -1;
 		strcpy_s(mapList[i], strlen(fd.name)+1, fd.name);
 	}
-
+	
 	_findclose(handle);
 
 
 	// 리스트 화면에 띄우기
-	for (int i = 0; i < *mapCount; i++) {
+	for (int i = 0; i < mapCount; i++) {
 		gotoxy(lp+2, tp+2+i);
 		puts(mapList[i]);
 	}
 
 	return 0;
 }
+
+
