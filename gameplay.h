@@ -6,6 +6,7 @@
 #include <time.h>
 #include <Windows.h>
 #include <mmsystem.h>
+#include <wchar.h>
 #include "main.h"
 
 
@@ -16,6 +17,9 @@
 #define N '@' // 노트
 #define x ' ' // 노트 없음
 
+
+const int glp = (SCREEN_WIDTH/2) - (LINE/2 * NOTETHK); // gameplay left padding
+const int gtp = 0; // gameplay top padding
 
 char* mapDir; // 맵 폴더 경로
 char* mapName; // 맵 이름
@@ -35,6 +39,7 @@ int shouldRemove[LINE];
 
 
 void main_gameplay(char* _mapName);
+void init();
 int readNoteMapFile();
 void drawScreen();
 void countdown();

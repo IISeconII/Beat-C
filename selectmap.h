@@ -9,8 +9,8 @@
 int mapCount; // 맵의 개수
 char** mapList; // 맵 선택 창에서 띄울 맵 목록
 
-const int lp = 30; // left padding
-const int tp = 3; // top padding
+const int slp = 30; // selectmap left padding
+const int stp = 3; // selectmap top padding
 
 static char mapGuideDocs[][82] = { // 맵 제작법 텍스트
 	":( 맵이 없네요..",

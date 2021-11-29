@@ -7,14 +7,7 @@
 void main_gameplay(char* _mapName) {
 	mapName = _mapName;
 
-	memset(note, x, sizeof(note));
-	memset(shouldRemove, FALSE, LINE);
-	score = 0;
-	mapIndex = 0;
-	songPlayed = FALSE;
-	gameEnd = FALSE;
-
-	system("cls");
+	init();
 
 	if (readNoteMapFile() == -1) {
 		system("cls");
@@ -42,6 +35,19 @@ void main_gameplay(char* _mapName) {
 	for (int i = 0; i < mapLength; i++) free(map[i]); free(map);
 }
 
+
+// 변수+a 초기화
+void init()
+{
+	memset(note, x, sizeof(note));
+	memset(shouldRemove, FALSE, LINE);
+	score = 0;
+	mapIndex = 0;
+	songPlayed = FALSE;
+	gameEnd = FALSE;
+
+	system("cls");
+}
 
 // 노트 맵 파일을 읽어서 note에 저장한다.
 int readNoteMapFile() {
@@ -103,18 +109,19 @@ void drawScreen() {
 
 	// 양옆 박스
 	for (int i = 0; i < HEI; i++) {
-		gotoxy(LINE * NOTETHK, i); _putch('|');
+		gotoxy(glp - 1, i + gtp); _putch('|');
+		gotoxy(LINE*NOTETHK + glp, i + gtp); _putch('|');
 	}
 
 	// 판정선
-	gotoxy(0, HEI - 2);
-	for (int j = 0; j <= LINE * NOTETHK; j++) {
+	gotoxy(glp - 1, HEI-2 + gtp);
+	for (int j = 0; j <= LINE * NOTETHK + 1; j++) {
 		_putch('-');
 	}
 
 	// 데드라인
-	gotoxy(0, HEI);
-	for (int j = 0; j <= LINE * NOTETHK; j++) {
+	gotoxy(glp - 1, HEI + gtp);
+	for (int j = 0; j <= LINE * NOTETHK + 1; j++) {
 		_putch('^');
 	}
 }
@@ -122,12 +129,12 @@ void drawScreen() {
 // 카운트다운
 void countdown() {
 	for (int i = 3; i >= 1; i--) {
-		gotoxy(LINE*NOTETHK/2, HEI/2-1); // 맵 중앙
+		gotoxy(LINE*NOTETHK/2 + glp, HEI/2-1 + gtp); // 맵 중앙
 		printf("%d", i);
 		Sleep(500);
 	}
 
-	gotoxy(LINE*NOTETHK/2-3, HEI/2-1);
+	gotoxy(LINE*NOTETHK/2-3 + glp, HEI/2-1 + gtp);
 	puts("Start!");
 	Sleep(500);
 }
@@ -140,7 +147,7 @@ void playSong() {
 	if (songPath == NULL) return;
 	sprintf_s(songPath, pathSize, "%s%s%s", mapDir, mapName, extension);
 
-	PlaySound(TEXT("maps/map1/map1.wav"), 0, SND_ASYNC);
+	PlaySound((wchar_t*)songPath, 0, SND_ASYNC);
 	gotoxy(30, 10); puts("play"); // debug
 
 	free(songPath);
@@ -163,7 +170,7 @@ void fallingNote() {
 		// MISS 노트 검사
 		for (int i = 0; i < LINE; i++) {
 			if (note[HEI-1][i] == N) {
-				gotoxy(i*NOTETHK+1, HEI+1);
+				gotoxy(i*NOTETHK+1 + glp, HEI+1 + gtp);
 				puts("miss");
 				shouldRemove[i] = 1;
 			}
@@ -220,19 +227,18 @@ void fallingNote() {
 
 // 노트 + 맵을 콘솔 창에 출력한다.
 void showNotes() {
-	gotoxy(0, 0);
 	for (int i = 0; i < HEI; i++) {
+		gotoxy(glp, i + gtp);
 		for (int j = 0; j < LINE; j++) {
 			for (int k = 0; k < NOTETHK; k++) {
 				_putch(note[i][j]);
 			}
 		}
-		_putch('\n');
 	}
 
 	// 판정선
 	for (int i = 0; i < LINE; i++) {
-		gotoxy(i * NOTETHK, HEI - 2);
+		gotoxy(i*NOTETHK + glp, HEI-2 + gtp);
 		if (note[HEI - 2][i] == x) {
 			for (int j = 0; j < NOTETHK; j++)
 				_putch('-');
@@ -281,12 +287,12 @@ void hitNote(int line, int judgement) {
 		case 2: score += 300; break; // GOOD
 		case 3: score += 200; break; // FAST
 	}
-	gotoxy(LINE * NOTETHK + 2, 0);
+	gotoxy(LINE*NOTETHK+2 + glp, gtp);
 	printf("%-d", score);
 
 
 	// 판정 텍스트
-	gotoxy(line * NOTETHK + 1, HEI + 1);
+	gotoxy(line*NOTETHK+1 + glp, HEI+1 + gtp);
 	switch (judgement) {
 		case 1: puts("LATE"); break;
 		case 2: puts("GOOD"); break;
@@ -311,7 +317,7 @@ void removingJudgeTxt() {
 		}
 
 		if (shouldRemove[i] == 2 && clock() - timer[i] >= 1000) {
-			gotoxy(i * NOTETHK + 1, HEI + 1);
+			gotoxy(i*NOTETHK+1 + glp, HEI+1 + gtp);
 			puts("    ");
 			shouldRemove[i] = 0;
 		}
@@ -322,8 +328,8 @@ void removingJudgeTxt() {
 
 // 플레이 종료 & 점수 띄우기
 void showScore() {
-	gotoxy(2, HEI/2-1);
+	gotoxy(2 + glp, HEI/2-1 + gtp);
 	printf("점수: %d점", score);
-	gotoxy(2, HEI/2);
+	gotoxy(2 + glp, HEI/2 + gtp);
 	printf("메인 화면으로 돌아가려면 아무 키나 누르세요.");
 }

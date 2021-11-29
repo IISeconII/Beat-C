@@ -10,7 +10,7 @@ char* main_selectmap() {
 
 	setCursor(HIDE);
 
-	gotoxy(lp, tp);
+	gotoxy(slp, stp);
 	puts("곡을 선택하세요.");
 	
 	mapCount = 0;
@@ -19,7 +19,7 @@ char* main_selectmap() {
 	if (mapCount == 0) {
 		system("cls");
 		for (int i = 0; i < sizeof(mapGuideDocs) / sizeof(mapGuideDocs[0]); i++) {
-			gotoxy(lp, tp+i); puts(mapGuideDocs[i]);
+			gotoxy(slp, stp+i); puts(mapGuideDocs[i]);
 		}
 
 		while (1);
@@ -34,7 +34,7 @@ char* main_selectmap() {
 int selecting(int mapCount)
 {
 	int pointer = 0;
-	gotoxy(lp, tp+2+pointer);
+	gotoxy(slp, stp+2+pointer);
 	_putch('>');
 
 	int key;
@@ -48,14 +48,14 @@ int selecting(int mapCount)
 		switch (key) {
 
 			case 72: // ↑ up
-				gotoxy(lp, tp+2+pointer); _putch(' ');
+				gotoxy(slp, stp+2+pointer); _putch(' ');
 				pointer--;
 				if (pointer < 0)
 					pointer = mapCount - 1;
 				break;
 
 			case 80: // ↓ down
-				gotoxy(lp, tp + 2 + pointer); _putch(' ');
+				gotoxy(slp, stp + 2 + pointer); _putch(' ');
 				pointer++;
 				if (pointer >= mapCount)
 					pointer = 0;
@@ -67,7 +67,7 @@ int selecting(int mapCount)
 				break;
 		}
 
-		gotoxy(lp, tp+2+pointer); _putch('>');
+		gotoxy(slp, stp+2+pointer); _putch('>');
 	}
 
 	return pointer;
@@ -124,7 +124,7 @@ int loadMaps() {
 
 	// 리스트 화면에 띄우기
 	for (int i = 0; i < mapCount; i++) {
-		gotoxy(lp+2, tp+2+i);
+		gotoxy(slp+2, stp+2+i);
 		puts(mapList[i]);
 	}
 
