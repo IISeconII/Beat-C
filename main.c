@@ -5,6 +5,8 @@
 
 int main() {
 
+	setlocale(LC_ALL, "");
+
 	main_keysetting();
 
 	main_title();
