@@ -18,8 +18,8 @@ void main_gameplay(char* _mapName) {
 	}
 
 	drawScreen();
-
 	countdown();
+	updateUI(0);
 
 	while (!gameEnd) {
 		fallingNote();
@@ -27,7 +27,7 @@ void main_gameplay(char* _mapName) {
 		removingJudgeTxt();
 	}
 
-	showScore();
+	showStats();
 	while (!_kbhit()) removingJudgeTxt();
 
 
@@ -36,15 +36,18 @@ void main_gameplay(char* _mapName) {
 }
 
 
-// 변수+a 초기화
+// 변수 초기화 + cls
 void init()
 {
-	memset(note, x, sizeof(note));
-	memset(shouldRemove, FALSE, LINE);
-	score = 0;
 	mapIndex = 0;
 	songPlayed = FALSE;
 	gameEnd = FALSE;
+	score = 0;
+	combo = 0;
+	accuracy = 100;
+	noteCount = 0;
+	memset(note, x, sizeof(note));
+	memset(shouldRemove, FALSE, LINE);
 
 	system("cls");
 }
@@ -109,18 +112,18 @@ void drawScreen() {
 
 	// 양옆 박스
 	for (int i = 0; i < HEI; i++) {
-		gotoxy(glp - 1, i + gtp); _putch('|');
-		gotoxy(LINE*NOTETHK + glp, i + gtp); _putch('|');
+		gotoxy(glp - 1, gtp + i); _putch('|');
+		gotoxy(glp + LINE*NOTETHK, gtp + i); _putch('|');
 	}
 
 	// 판정선
-	gotoxy(glp - 1, HEI-2 + gtp);
+	gotoxy(glp - 1, gtp + HEI-2);
 	for (int j = 0; j <= LINE * NOTETHK + 1; j++) {
 		_putch('-');
 	}
 
 	// 데드라인
-	gotoxy(glp - 1, HEI + gtp);
+	gotoxy(glp - 1, gtp + HEI);
 	for (int j = 0; j <= LINE * NOTETHK + 1; j++) {
 		_putch('^');
 	}
@@ -129,12 +132,12 @@ void drawScreen() {
 // 카운트다운
 void countdown() {
 	for (int i = 3; i >= 1; i--) {
-		gotoxy(LINE*NOTETHK/2 + glp, HEI/2-1 + gtp); // 맵 중앙
+		gotoxy(glp + LINE*NOTETHK/2, gtp + HEI/2-1); // 맵 중앙
 		printf("%d", i);
 		Sleep(500);
 	}
 
-	gotoxy(LINE*NOTETHK/2-3 + glp, HEI/2-1 + gtp);
+	gotoxy(glp + LINE*NOTETHK/2 - 3, gtp + HEI / 2 - 1);
 	puts("Start!");
 	Sleep(500);
 }
@@ -167,12 +170,10 @@ void fallingNote() {
 
 	if (clock() - timer >= FALLSPEED) {
 
-		// MISS 노트 검사
+		// miss 노트 검사
 		for (int i = 0; i < LINE; i++) {
 			if (note[HEI-1][i] == N) {
-				gotoxy(i*NOTETHK+1 + glp, HEI+1 + gtp);
-				puts("miss");
-				shouldRemove[i] = 1;
+				hitNote(i, -1);
 			}
 		}
 
@@ -228,7 +229,7 @@ void fallingNote() {
 // 노트 + 맵을 콘솔 창에 출력한다.
 void showNotes() {
 	for (int i = 0; i < HEI; i++) {
-		gotoxy(glp, i + gtp);
+		gotoxy(glp, gtp + i);
 		for (int j = 0; j < LINE; j++) {
 			for (int k = 0; k < NOTETHK; k++) {
 				_putch(note[i][j]);
@@ -238,7 +239,7 @@ void showNotes() {
 
 	// 판정선
 	for (int i = 0; i < LINE; i++) {
-		gotoxy(i*NOTETHK + glp, HEI-2 + gtp);
+		gotoxy(glp + i * NOTETHK, gtp + HEI - 2);
 		if (note[HEI - 2][i] == x) {
 			for (int j = 0; j < NOTETHK; j++)
 				_putch('-');
@@ -265,7 +266,7 @@ void keyInput() {
 
 // key가 눌렸을 때 호출된다.
 void press(int line) {
-	for (int i = 1; i <= 3; i++) {
+	for (int i = 1; i <= 4; i++) {
 		if (note[HEI - i][line] == N) {
 			hitNote(line, i);
 			return;
@@ -274,29 +275,48 @@ void press(int line) {
 }
 
 // 해당 line의 노트를 친다.
-// judgement: 1 -> LATE, 2 -> GOOD, 3 -> FAST
+// judgement :
+//   1 -> LATE
+//   2 -> GOOD
+//   3 -> FAST
+//   4 -> miss(TOOFAST)
+//  -1 -> miss(TOOLATE)
 void hitNote(int line, int judgement) {
 
 	// 해당 노트 삭제
-	note[HEI-judgement][line] = x;
+	if (judgement != -1) note[HEI-judgement][line] = x;
+	noteCount++;
 
 
-	// 점수
+	// 점수, 정확도
 	switch (judgement) {
-		case 1: score += 200; break; // LATE
-		case 2: score += 300; break; // GOOD
-		case 3: score += 200; break; // FAST
+		case 1: // LATE
+		case 3: // FAST (200점에 66%)
+			score += 200 + (int)round(200 * combo / 100.0);
+			accuracy = (accuracy * (noteCount-1) + 200/3.0) / noteCount;
+			updateUI(+1);
+			break;
+		case 2: // GOOD (300점에 100%)
+			score += 300 + (int)round(300 * combo / 100.0);
+			accuracy = (accuracy * (noteCount-1) + 100) / noteCount;
+			updateUI(+1);
+			break;
+		case 4:
+		case -1: // miss (0점에 0%)
+			score += 0;
+			accuracy = (accuracy * (noteCount - 1) + 0) / noteCount;
+			updateUI(-1);
+			break;
 	}
-	gotoxy(LINE*NOTETHK+2 + glp, gtp);
-	printf("%-d", score);
 
 
 	// 판정 텍스트
-	gotoxy(line*NOTETHK+1 + glp, HEI+1 + gtp);
+	gotoxy(glp + line*NOTETHK+1, gtp + HEI+1);
 	switch (judgement) {
 		case 1: puts("LATE"); break;
 		case 2: puts("GOOD"); break;
 		case 3: puts("FAST"); break;
+		case 4: case -1: puts("miss"); break;
 	}
 	shouldRemove[line] = 1;
 
@@ -304,7 +324,6 @@ void hitNote(int line, int judgement) {
 	// 화면 업데이트
 	showNotes();
 }
-
 
 // 노트를 치고 1초 이후에 판정 텍스트 제거 (스레드)
 void removingJudgeTxt() {
@@ -317,7 +336,7 @@ void removingJudgeTxt() {
 		}
 
 		if (shouldRemove[i] == 2 && clock() - timer[i] >= 1000) {
-			gotoxy(i*NOTETHK+1 + glp, HEI+1 + gtp);
+			gotoxy(glp + i*NOTETHK+1, gtp + HEI+1);
 			puts("    ");
 			shouldRemove[i] = 0;
 		}
@@ -326,10 +345,39 @@ void removingJudgeTxt() {
 }
 
 
-// 플레이 종료 & 점수 띄우기
-void showScore() {
-	gotoxy(2 + glp, HEI/2-1 + gtp);
+// 점수 & 콤보 UI 업데이트
+// 1: 콤보 증가, -1: 콤보 초기화
+void updateUI(int comboPlus) {
+
+	// 점수
+	gotoxy(glp + LINE * NOTETHK + 2, gtp);
+	printf("Score: %d", score);
+
+	// 콤보
+	if (comboPlus == 1) {
+		combo++;
+	} else if (comboPlus == -1) {
+		combo = 0;
+	}
+	gotoxy(glp + LINE*NOTETHK + 2, gtp + 2);
+	printf("Combo: %-4d", combo);
+
+	// 정확도
+	gotoxy(glp + LINE * NOTETHK + 2, gtp + 4);
+	printf("Accuracy: %-3.3f%%", accuracy);
+
+	// [debug] noteCount
+	gotoxy(glp + LINE * NOTETHK + 2, gtp + 6);
+	printf("%d", noteCount);
+}
+
+
+// 기록 띄우기
+void showStats() {
+	gotoxy(glp + 1, gtp + HEI/2-1);
 	printf("점수: %d점", score);
-	gotoxy(2 + glp, HEI/2 + gtp);
+	gotoxy(glp + 1, gtp + HEI/2);
+	printf("정확도: %.3f%%", accuracy);
+	gotoxy(glp + 1, gtp + HEI/2+1);
 	printf("메인 화면으로 돌아가려면 아무 키나 누르세요.");
 }

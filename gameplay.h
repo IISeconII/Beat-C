@@ -7,6 +7,7 @@
 #include <Windows.h>
 #include <mmsystem.h>
 #include <wchar.h>
+#include <math.h>
 #include "main.h"
 
 
@@ -28,7 +29,11 @@ int mapLength; // 패턴의 길이 (map의 행 개수)
 int mapIndex; // 현재 맵의 몇 번째 줄을 읽고 있는가?
 
 char note[HEI][LINE]; // 화면에 보이는 모든 노트 리스트 (= 화면)
+
 int score; // 점수
+int combo; // 콤보
+double accuracy; // 정확도
+int noteCount; // 노트가 내려온 횟수 (판정 계산에 사용)
 
 BOOL songPlayed; // BGM이 재생됐는가?
 BOOL gameEnd; // 게임이 끝났는가?
@@ -52,6 +57,9 @@ void keyInput();
 void press(int line);
 void hitNote(int line, int judgement);
 
+
 void removingJudgeTxt();
 
-void showScore();
+void updateUI(int comboPlus);
+
+void showStats();
