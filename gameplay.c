@@ -108,7 +108,6 @@ int readNoteMapFile() {
 
 // 화면 맵을 그린다.
 void drawScreen() {
-	system("cls");
 
 	// 양옆 박스
 	for (int i = 0; i < HEI; i++) {
