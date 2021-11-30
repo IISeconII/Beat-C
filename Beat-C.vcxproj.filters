@@ -61,5 +61,8 @@
     <Text Include="map\map1.txt">
       <Filter>리소스 파일\map</Filter>
     </Text>
+    <Text Include="maps\sample\sample.txt">
+      <Filter>리소스 파일\map</Filter>
+    </Text>
   </ItemGroup>
 </Project>

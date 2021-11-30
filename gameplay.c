@@ -231,8 +231,8 @@ void showNotes() {
 	for (int i = 0; i < HEI; i++) {
 		gotoxy(glp, gtp + i);
 		for (int j = 0; j < LINE; j++) {
-			for (int k = 0; k < NOTETHK; k++) {
-				_putch(note[i][j]);
+			for (int k = 0; k < NOTETHK/2; k++) {
+				wprintf(L"%ws", note[i][j] == N ? L"бс" : L"  ");
 			}
 		}
 	}

@@ -167,6 +167,7 @@
     <ClInclude Include="title.h" />
   </ItemGroup>
   <ItemGroup>
+    <Text Include="maps\sample\sample.txt" />
     <Text Include="map\map1.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
