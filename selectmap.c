@@ -25,6 +25,11 @@ char* main_selectmap() {
 		while (1);
 	}
 
+	else {
+		gotoxy(slp + 30, stp-1); puts("키를 설정하려면");
+		gotoxy(slp + 30, stp);   puts("S키를 누르세요");
+	}
+
 	int pointer = selecting(mapCount);
 	return mapList[pointer];
 }
@@ -34,8 +39,7 @@ char* main_selectmap() {
 int selecting(int mapCount)
 {
 	int pointer = 0;
-	gotoxy(slp, stp+2+pointer);
-	_putch('>');
+	gotoxy(slp, stp+2+pointer); _putch('>');
 
 	int key;
 	BOOL selected = FALSE;
@@ -46,6 +50,12 @@ int selecting(int mapCount)
 			key = _getch();
 
 		switch (key) {
+
+			case 's':
+				gotoxy(slp, stp+2+pointer); _putch(' ');
+				main_keysetting();
+				gotoxy(slp, stp+2+pointer); _putch('>');
+				break;
 
 			case 72: // ↑ up
 				gotoxy(slp, stp+2+pointer); _putch(' ');
