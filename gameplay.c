@@ -126,6 +126,10 @@ void drawScreen() {
 	for (int j = 0; j <= LINE * NOTETHK + 1; j++) {
 		_putch('^');
 	}
+
+	// 곡 제목
+	gotoxy(glp-6-strlen(mapName), gtp+1);
+	printf("< %s >", mapName);
 }
 
 // 카운트다운
@@ -182,7 +186,7 @@ void fallingNote() {
 				note[HEI-i][j] = note[HEI-(i+1)][j];
 
 				// 노트가 처음 판정선에 닿았을 때 BGM 재생
-				if (!songPlayed && i == 2 && note[HEI - i][j] == N) {
+				if (!songPlayed && i == 2 && note[HEI-i][j] == N) {
 					playSong();
 					songPlayed = TRUE;
 				}
@@ -198,8 +202,12 @@ void fallingNote() {
 
 			// 맵의 마지막 노트를 만들면 좀 있다 게임 종료
 			if (mapIndex == mapLength) {
+
+				gotoxy(30, 10); puts("end"); // debug
+
 				end = TRUE;
 				endTimer = clock();
+
 			}
 		}
 
@@ -219,6 +227,9 @@ void fallingNote() {
 	// 맵의 마지막 노트를 만들면 좀 있다 게임 종료
 	if (end) {
 		if (clock() - endTimer >= FALLSPEED * HEI + 1000) {
+
+			gotoxy(30, 11); puts("gameEnd"); // debug
+
 			gameEnd = TRUE;
 			end = FALSE;
 		}
@@ -373,10 +384,14 @@ void updateUI(int comboPlus) {
 
 // 기록 띄우기
 void showStats() {
+	gotoxy(glp + 1, gtp + HEI/2-3);
+	printf("%s 플레이 결과", mapName);
 	gotoxy(glp + 1, gtp + HEI/2-1);
 	printf("점수: %d점", score);
 	gotoxy(glp + 1, gtp + HEI/2);
 	printf("정확도: %.3f%%", accuracy);
-	gotoxy(glp + 1, gtp + HEI/2+1);
-	printf("메인 화면으로 돌아가려면 아무 키나 누르세요.");
+	gotoxy(glp + 1, gtp + HEI/2+2);
+	printf("메인 화면으로 돌아가려면");
+	gotoxy(glp + 1, gtp + HEI/2+3);
+	printf("아무 키나 누르세요");
 }
