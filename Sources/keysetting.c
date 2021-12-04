@@ -40,11 +40,11 @@ void main_keysetting() {
 		}
 
 		switch (k) {
-			case 8: // Backspace
+			case BACKSPACE:
 				wcscpy_s(keyName[i], sizeof(keyName[i])/sizeof(wchar_t), L"Bksp"); break;
-			case 13: // Enter
+			case ENTER:
 				wcscpy_s(keyName[i], sizeof(keyName[i])/sizeof(wchar_t), L"Entr"); break;
-			case 32: // Space
+			case SPACE:
 				wcscpy_s(keyName[i], sizeof(keyName[i])/sizeof(wchar_t), L"Spce"); break;
 			default:
 				keyName[i][0] = k + 0xFEE0 - ('a' <= k && k <= 'z' ? 'a' - 'A' : 0); keyName[i][1] = '\0'; break;

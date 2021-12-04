@@ -13,6 +13,15 @@
 #define LINE 4 // 노트 라인의 수 = 누르는 키의 개수
 
 
+enum KeyCode { // 키코드
+	BACKSPACE = 8, // 백스페이스 키코드
+	ENTER = 13, // 엔터 키코드
+	SPACE = 32, // 스페이스바 키코드
+	UP = 72, // 위쪽 방향키 키코드
+	DOWN = 80 // 아래쪽 방향키 키코드
+};
+
+
 int key[LINE]; // 각 라인을 누르는 키 목록
 const char* mapPath; // 맵이 저장된 폴더 경로
 
@@ -26,3 +35,5 @@ void main_keysetting();
 void main_title();
 char* main_selectmap();
 void main_gameplay(char* _mapName);
+
+void clearBuffer();
