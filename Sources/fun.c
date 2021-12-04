@@ -30,3 +30,17 @@ void setCursor(CURSOR_TYPE curType) {
 
 	SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE), &CurInfo);
 }
+
+// 현재 커서의 X 좌표를 리턴한다.
+int wherex() {
+	CONSOLE_SCREEN_BUFFER_INFO curInfo;
+	GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &curInfo);
+	return curInfo.dwCursorPosition.X;
+}
+
+// 현재 커서의 Y 좌표를 리턴한다.
+int wherey() {
+	CONSOLE_SCREEN_BUFFER_INFO curInfo;
+	GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &curInfo);
+	return curInfo.dwCursorPosition.Y;
+}
