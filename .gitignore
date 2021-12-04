@@ -1,4 +1,8 @@
 .vs
+
+# 임시 빌드 폴더
 Debug
 x64
-maps/R8/R8.wav
+
+# 음악 저작권
+*.wav
