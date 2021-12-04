@@ -9,9 +9,6 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="리소스 파일\map">
-      <UniqueIdentifier>{56c6d6de-87a4-4c7a-81d7-06f4cc9156ab}</UniqueIdentifier>
-    </Filter>
     <Filter Include="소스 파일\main">
       <UniqueIdentifier>{5afb1399-8752-4b01-87e9-10555cd3fd73}</UniqueIdentifier>
     </Filter>
@@ -30,13 +27,16 @@
     <Filter Include="소스 파일\함수">
       <UniqueIdentifier>{840c1594-92fe-4264-b5bd-eba24f7bf8d9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="리소스 파일\maps">
+      <UniqueIdentifier>{56c6d6de-87a4-4c7a-81d7-06f4cc9156ab}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="map\map1.txt">
-      <Filter>리소스 파일\map</Filter>
+      <Filter>리소스 파일\maps</Filter>
     </Text>
     <Text Include="maps\sample\sample.txt">
-      <Filter>리소스 파일\map</Filter>
+      <Filter>리소스 파일\maps</Filter>
     </Text>
   </ItemGroup>
   <ItemGroup>
