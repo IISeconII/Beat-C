@@ -22,6 +22,7 @@ void main_gameplay(char* _mapName) {
 	updateUI(0);
 
 	while (!gameEnd) {
+		gotoxy(0, 0); printf("%d", clock());
 		fallingNote();
 		keyInput();
 		removingJudgeTxt();
@@ -32,7 +33,6 @@ void main_gameplay(char* _mapName) {
 	while (!_kbhit()) removingJudgeTxt();
 
 
-	free(mapDir);
 	for (int i = 0; i < mapLength; i++) free(map[i]); free(map);
 }
 
@@ -57,55 +57,55 @@ void init()
 int readNoteMapFile() {
 	FILE *f;
 
-	// 맵 폴더 경로 설정 (maps/mapName/)
-	const int mapDirSize = (int)strlen(mapPath) + (int)strlen(mapName) + 1 + 1;
+	// 맵 폴더 위치 설정 (maps/mapName/)
+	const int mapDirSize = (int)strlen(mapFolder) + 1 + (int)strlen(mapName) + 1 + 1;
 	mapDir = malloc(mapDirSize);
-	sprintf_s(mapDir, mapDirSize, "%s%s/", mapPath, mapName);
+	sprintf_s(mapDir, mapDirSize, "%s/%s/", mapFolder, mapName);
+
+	// info.json 경로 설정 (maps/mapName/info.json)
+	const char infoStr[] = "info.json";
+	const int infoPathSize = mapDirSize + (int)strlen(infoStr);
+	char* infoPath = malloc(infoPathSize);
+	sprintf_s(infoPath, infoPathSize, "%s%s", mapDir, infoStr);
+
+	// info.json 객체 생성
+	JSON_Value *jsonValue = json_parse_file(infoPath);
+	mapInfo = json_value_get_object(jsonValue);
 
 	// 맵 파일 경로 설정 (maps/mapName/mapName.txt)
-	const char* extension = ".txt";
-	const int pathSize = mapDirSize + (int)strlen(mapName) + (int)strlen(extension);
-	char* path = malloc(pathSize);
-	if (path == NULL) return -1;
-	sprintf_s(path, pathSize, "%s%s%s", mapDir, mapName, extension);
+	const char* noteFile = json_object_get_string(mapInfo, "mapFile");
+	const int notePathSize = mapDirSize + (int)strlen(noteFile);
+	char* notePath = malloc(notePathSize);
+	if (notePath == NULL) return -1;
+	sprintf_s(notePath, notePathSize, "%s%s", mapDir, noteFile);
 
-
-	// 줄 개수 세기
-	mapLength = 0;
-	fopen_s(&f, path, "r");
+	// 맵 읽어서 map에 넣기
+	mapLength = (int)json_object_get_number(mapInfo, "mapLength");
+	fopen_s(&f, notePath, "r");
 	if (f == NULL) return -1;
 
-	while (!feof(f)) {
-		if (fgetc(f) == '\n')
-			mapLength++;
-	} mapLength++;
-
-	fseek(f, 0, SEEK_SET);
-
-	
-	// 맵 읽어서 map에 넣기
 	map = malloc(mapLength * sizeof(char*));
 	if (map == NULL) return -1;
+
+	// 한 줄씩 읽기
 	char* line;
-
 	for (int i = 0; i < mapLength; i++) {
-
 		line = malloc(LINE * sizeof(char));
 		if (line == NULL) return -1;
-
 		for (int j = 0; j < LINE; j++) {
 			line[j] = fgetc(f);
 		}
-
 		map[i] = line;
 
 		fgetc(f); // '\n'
 	}
 
+	// 정리
 	fclose(f);
-	free(path);
+	free(mapDir); free(infoPath); free(notePath);
 	return 0;
 }
+
 
 // 화면 맵을 그린다.
 void drawScreen() {
@@ -146,20 +146,6 @@ void countdown() {
 	Sleep(500);
 }
 
-// 노래(BGM)를 재생한다.
-void playSong() {
-	const char extension[] = ".wav";
-	const int pathSize = (int)strlen(mapDir) + (int)strlen(mapName) + sizeof(extension);
-	char* songPath = malloc(pathSize);
-	if (songPath == NULL) return;
-	sprintf_s(songPath, pathSize, "%s%s%s", mapDir, mapName, extension);
-
-	PlaySound((wchar_t*)songPath, 0, SND_ASYNC);
-	gotoxy(30, 10); puts("play"); // debug
-
-	free(songPath);
-}
-
 
 // 화면에 있는 모든 노트를 한 칸씩 아래로 이동시킨다. (스레드)
 // 노트를 만들고, 화면 밖으로 나가면 없앤다.
@@ -167,12 +153,13 @@ void fallingNote() {
 	static clock_t timer = 0;
 	if (timer == 0)
 		timer = clock();
+	static clock_t runtime = FALLSPEED;
 
 	// 모든 노트가 만들어지고 좀 있다가 게임을 종료시키기 위한 타이머
 	static clock_t endTimer = 0;
 	static BOOL end = FALSE;
 
-	if (clock() - timer >= FALLSPEED) {
+	if (clock() - timer >= runtime) {
 
 		// miss 노트 검사
 		for (int i = 0; i < LINE; i++) {
@@ -222,7 +209,7 @@ void fallingNote() {
 		// 화면 업데이트
 		showNotes();
 
-		timer = clock();
+		runtime += FALLSPEED;
 	}
 
 	// 맵의 마지막 노트를 만들면 좀 있다 게임 종료
@@ -355,6 +342,20 @@ void removingJudgeTxt() {
 	
 }
 
+
+// 노래(BGM)를 재생한다.
+void playSong() {
+	const char* songName = json_object_get_string(mapInfo, "songFile");
+	const int pathSize = (int)strlen(mapDir) + (int)strlen(songName) + 1;
+	char* songPath = malloc(pathSize);
+	if (songPath == NULL) return;
+	sprintf_s(songPath, pathSize, "%s%s", mapDir, songName);
+
+	PlaySound(songPath, 0, SND_ASYNC);
+	gotoxy(30, 10); puts("play"); // debug
+
+	free(songPath);
+}
 
 // 점수 & 콤보 UI 업데이트
 // 1: 콤보 증가, -1: 콤보 초기화

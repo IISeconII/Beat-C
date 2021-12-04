@@ -7,12 +7,13 @@
 #include <mmsystem.h>
 #include <wchar.h>
 #include <math.h>
+#include "parson.h"
 #include "main.h"
 
 
 #define NOTETHK 6 // note thickness; 노트 하나의 두께 (가로 길이)
 #define HEI 20 // height; 창 높이 (밑에서 두 번째 줄이 퍼펙트 판정선)
-#define FALLSPEED 150 // 노트가 떨어지는 속도(ms), FALLSPEED초에 한 칸씩 떨어짐
+#define FALLSPEED 83 // 노트가 떨어지는 속도(ms), FALLSPEED초에 한 칸씩 떨어짐
 
 #define N '@' // 노트
 #define x ' ' // 노트 없음
@@ -21,8 +22,9 @@
 const int glp = (SCREEN_WIDTH/2) - (LINE/2 * NOTETHK); // gameplay left padding
 const int gtp = 0; // gameplay top padding
 
-char* mapDir; // 맵 폴더 경로
 char* mapName; // 맵 이름
+char* mapDir; // 맵 폴더 경로
+JSON_Object* mapInfo; // info.json 데이터
 char** map; // 맵 (노트가 나오는 패턴)
 int mapLength; // 패턴의 길이 (map의 행 개수)
 int mapIndex; // 현재 맵의 몇 번째 줄을 읽고 있는가?
@@ -43,22 +45,21 @@ int shouldRemove[LINE];
 
 
 void main_gameplay(char* _mapName);
+
 void init();
 int readNoteMapFile();
+
 void drawScreen();
 void countdown();
-void playSong();
 
 void fallingNote();
 void showNotes();
-
 void keyInput();
 void press(int line);
 void hitNote(int line, int judgement);
-
-
 void removingJudgeTxt();
 
+void playSong();
 void updateUI(int comboPlus);
 
 void showStats();
