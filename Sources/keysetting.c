@@ -9,22 +9,24 @@ void main_keysetting() {
 	const int klp = 8; // keysetting left padding
 	const int ktp = 4; // keysetting top padding
 	const int gap = 5; // 키 공간 사이의 간격 (+1)
+	const int boxWid = (LINE-1) * gap + 1; // 키설정 UI 가로 범위
 	memset(key, 0, sizeof(key));
 
 	setCursor(BLOCK);
-	gotoxy(klp + (LINE + gap * 3 - 8) / 2, ktp);
+	gotoxy(klp + (boxWid-8) / 2, ktp);
 	puts("키 설정");
 	for (int i = 0; i < LINE; i++) {
-		gotoxy(klp + i * gap, ktp + 2); wprintf(L"▽");
+		gotoxy(klp + i*gap, ktp + 2); wprintf(L"▽");
 	}
 
 	// 키 입력
+	wchar_t keyName[LINE][5] = {0,};
 	for (int i = 0; i < LINE; i++) {
-		gotoxy(klp + i * gap, ktp + 6); wprintf(L"↑");
+		gotoxy(klp + i*gap, ktp + 6); wprintf(L"↑");
 		
 		int k = 0;
 		for (;;) {
-			gotoxy(klp + i * gap, ktp + 4);
+			gotoxy(klp + i*gap, ktp + 4);
 			setCursor(BLOCK);
 			k = _getch();
 
@@ -37,45 +39,44 @@ void main_keysetting() {
 				break;
 		}
 
-		wchar_t keyName[5] = L"";
 		switch (k) {
 			case 8: // Backspace
-				wcscpy_s(keyName, sizeof(keyName)/sizeof(wchar_t), L"Bksp"); break;
+				wcscpy_s(keyName[i], sizeof(keyName[i])/sizeof(wchar_t), L"Bksp"); break;
 			case 13: // Enter
-				wcscpy_s(keyName, sizeof(keyName)/sizeof(wchar_t), L"Bksp"); break;
+				wcscpy_s(keyName[i], sizeof(keyName[i])/sizeof(wchar_t), L"Entr"); break;
 			case 32: // Space
-				wcscpy_s(keyName, sizeof(keyName)/sizeof(wchar_t), L"Bksp"); break;
+				wcscpy_s(keyName[i], sizeof(keyName[i])/sizeof(wchar_t), L"Spce"); break;
 			default:
-				keyName[0] = k + 0xFEE0 - ('a' <= k && k <= 'z' ? 'a' - 'A' : 0); keyName[1] = '\0'; break;
+				keyName[i][0] = k + 0xFEE0 - ('a' <= k && k <= 'z' ? 'a' - 'A' : 0); keyName[i][1] = '\0'; break;
 		}
-		gotoxy(klp + i * gap + (wcslen(keyName) == 4 ? -1 : 0), ktp + 4);
-		wprintf(L"%s", keyName);
+		gotoxy(klp + i*gap - (wcslen(keyName[i])==4?1:0), ktp + 4);
+		wprintf(L"%s", keyName[i]);
 		
 		key[i] = k;
 
 		setCursor(HIDE);
-		gotoxy(klp + i * gap, ktp + 2); wprintf(L"▼");
-		gotoxy(klp + i * gap, ktp + 6); wprintf(L"　");
+		gotoxy(klp + i*gap, ktp + 2); wprintf(L"▼");
+		gotoxy(klp + i*gap, ktp + 6); wprintf(L"　");
 	}
 
+	// 깜빡깜빡
 	Sleep(180);
 	for (int r = 0; r < 2; r++) {
 		for (int i = 0; i < LINE; i++) {
-			gotoxy(klp + i * gap, ktp + 4); wprintf(L"―");
+			gotoxy(klp + i*gap - 1, ktp + 4); wprintf(L" ― ");
 		}
 		Sleep(110);
 		for (int i = 0; i < LINE; i++) {
-			gotoxy(klp + i * gap, ktp + 4); wprintf(L"%c", key[i] + 0xFEE0 - ('a' <= key[i] && key[i] <= 'z' ? 'a' - 'A' : 0));
+			gotoxy(klp + i*gap - (wcslen(keyName[i])==4?1:0), ktp + 4); wprintf(L"%s", keyName[i]);
 		}
 		Sleep(110);
 	}
-	
 	Sleep(400);
 
 	// 클리어
 	for (int i = 0; i < 6; i++) {
 		gotoxy(klp, ktp + i);
-		for (int j = 0; j < gap * 3 + LINE; j++) {
+		for (int j = 0; j < boxWid; j++) {
 			_putch(' ');
 		}
 	}
