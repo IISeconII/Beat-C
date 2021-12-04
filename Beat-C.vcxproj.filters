@@ -5,10 +5,6 @@
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
-    <Filter Include="헤더 파일">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
-    </Filter>
     <Filter Include="리소스 파일">
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
@@ -16,46 +12,24 @@
     <Filter Include="리소스 파일\map">
       <UniqueIdentifier>{56c6d6de-87a4-4c7a-81d7-06f4cc9156ab}</UniqueIdentifier>
     </Filter>
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="main.c">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="fun.c">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="gameplay.c">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="title.c">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="selectmap.c">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="keysetting.c">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="main.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="fun.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="gameplay.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="title.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="selectmap.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="keysetting.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
+    <Filter Include="소스 파일\main">
+      <UniqueIdentifier>{5afb1399-8752-4b01-87e9-10555cd3fd73}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\keysetting">
+      <UniqueIdentifier>{f178948c-3501-4c0b-b878-d0c6539dab81}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\title">
+      <UniqueIdentifier>{642a81c5-5f72-4a09-aa61-91149a81dfb9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\selectmap">
+      <UniqueIdentifier>{7d2dbd1f-3b7b-4ef1-abf4-6a02e9508b37}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\gameplay">
+      <UniqueIdentifier>{fd0dc5aa-6b7d-4aef-9cc0-4aac1d14518a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\함수">
+      <UniqueIdentifier>{840c1594-92fe-4264-b5bd-eba24f7bf8d9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="map\map1.txt">
@@ -64,5 +38,45 @@
     <Text Include="maps\sample\sample.txt">
       <Filter>리소스 파일\map</Filter>
     </Text>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Sources\main.c">
+      <Filter>소스 파일\main</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\keysetting.c">
+      <Filter>소스 파일\keysetting</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\fun.c">
+      <Filter>소스 파일\함수</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\gameplay.c">
+      <Filter>소스 파일\gameplay</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\selectmap.c">
+      <Filter>소스 파일\selectmap</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\title.c">
+      <Filter>소스 파일\title</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Sources\main.h">
+      <Filter>소스 파일\main</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\keysetting.h">
+      <Filter>소스 파일\keysetting</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\fun.h">
+      <Filter>소스 파일\함수</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\gameplay.h">
+      <Filter>소스 파일\gameplay</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\selectmap.h">
+      <Filter>소스 파일\selectmap</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\title.h">
+      <Filter>소스 파일\title</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

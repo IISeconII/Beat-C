@@ -139,36 +139,24 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="fun.c" />
-    <ClCompile Include="gameplay.c">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="keysetting.c" />
-    <ClCompile Include="main.c" />
-    <ClCompile Include="selectmap.c">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="title.c" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="fun.h" />
-    <ClInclude Include="gameplay.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
-    </ClInclude>
-    <ClInclude Include="keysetting.h" />
-    <ClInclude Include="main.h" />
-    <ClInclude Include="selectmap.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
-    </ClInclude>
-    <ClInclude Include="title.h" />
-  </ItemGroup>
-  <ItemGroup>
     <Text Include="maps\sample\sample.txt" />
     <Text Include="map\map1.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Sources\fun.c" />
+    <ClCompile Include="Sources\gameplay.c" />
+    <ClCompile Include="Sources\keysetting.c" />
+    <ClCompile Include="Sources\main.c" />
+    <ClCompile Include="Sources\selectmap.c" />
+    <ClCompile Include="Sources\title.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Sources\fun.h" />
+    <ClInclude Include="Sources\gameplay.h" />
+    <ClInclude Include="Sources\keysetting.h" />
+    <ClInclude Include="Sources\main.h" />
+    <ClInclude Include="Sources\selectmap.h" />
+    <ClInclude Include="Sources\title.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
