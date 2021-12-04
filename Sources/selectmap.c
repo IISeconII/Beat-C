@@ -97,6 +97,8 @@ int selecting(int mapCount)
 // 맵 리스트 불러와서 maps에 넣기
 int loadMaps() {
 
+	mapPath = "maps/";
+
 	// 맵 경로 제작 ("maps/*")
 	static char* dir = NULL;
 	if (dir == NULL) {
