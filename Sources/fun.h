@@ -9,6 +9,7 @@ typedef enum CURSOR_TYPE { HIDE, UNDERBAR, BLOCK } CURSOR_TYPE;
 
 
 void gotoxy(int x, int y);
+void movexy(int x, int y);
 void setCursor(CURSOR_TYPE curType);
-int wherex();
-int wherey();
+int curX();
+int curY();
