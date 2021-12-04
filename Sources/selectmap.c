@@ -40,14 +40,6 @@ int selecting(int mapCount)
 	int pointer = 0;
 	gotoxy(slp, stp+2+pointer); _putch('>');
 
-	/*clock_t timer = clock();
-	while (1) {
-		if (_kbhit()) {
-			gotoxy(0, 0);
-			printf("%d", clock() - timer);
-			Sleep(10000000);
-		}
-	}*/
 	Sleep(300);
 	clearBuffer();
 
