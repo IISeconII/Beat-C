@@ -4,6 +4,7 @@
 #include <conio.h>
 #include <io.h>
 #include "main.h"
+#include <time.h> // 임시!!!!!!!!!!!!!!!!!!!!
 
 
 int mapCount; // 맵의 개수

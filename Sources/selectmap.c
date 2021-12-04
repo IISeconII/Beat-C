@@ -5,9 +5,8 @@
 
 // ¸ÊÀ» ¼±ÅÃÇÏ´Â ¾À
 char* main_selectmap() {
-
 	system("cls");
-
+	fflush(stdin);
 	setCursor(HIDE);
 
 	gotoxy(slp, stp);
@@ -41,6 +40,17 @@ int selecting(int mapCount)
 	int pointer = 0;
 	gotoxy(slp, stp+2+pointer); _putch('>');
 
+	/*clock_t timer = clock();
+	while (1) {
+		if (_kbhit()) {
+			gotoxy(0, 0);
+			printf("%d", clock() - timer);
+			Sleep(10000000);
+		}
+	}*/
+	Sleep(300);
+	clearBuffer();
+
 	int key;
 	BOOL selected = FALSE;
 	while (!selected) {
@@ -57,22 +67,22 @@ int selecting(int mapCount)
 				gotoxy(slp, stp+2+pointer); _putch('>');
 				break;
 
-			case 72: // ¡è up
+			case UP:
 				gotoxy(slp, stp+2+pointer); _putch(' ');
 				pointer--;
 				if (pointer < 0)
 					pointer = mapCount - 1;
 				break;
 
-			case 80: // ¡é down
+			case DOWN:
 				gotoxy(slp, stp + 2 + pointer); _putch(' ');
 				pointer++;
 				if (pointer >= mapCount)
 					pointer = 0;
 				break;
 
-			case 13: // enter
-			case 32: // space
+			case ENTER:
+			case SPACE:
 				selected = TRUE;
 				break;
 		}
