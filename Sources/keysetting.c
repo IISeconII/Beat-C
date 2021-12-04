@@ -9,11 +9,11 @@ void main_keysetting() {
 	const int klp = 8; // keysetting left padding
 	const int ktp = 4; // keysetting top padding
 	const int gap = 5; // 키 공간 사이의 간격 (+1)
-	const int boxWid = (LINE-1) * gap + 1; // 키설정 UI 가로 범위
+	const int boxWid = LINE * gap - 1; // 키설정 UI 가로 범위
 	memset(key, 0, sizeof(key));
 
 	setCursor(BLOCK);
-	gotoxy(klp + (boxWid-8) / 2, ktp);
+	gotoxy(klp + (boxWid-7)/2 - 1, ktp);
 	puts("키 설정");
 	for (int i = 0; i < LINE; i++) {
 		gotoxy(klp + i*gap, ktp + 2); wprintf(L"▽");
@@ -75,10 +75,9 @@ void main_keysetting() {
 
 	// 클리어
 	for (int i = 0; i < 6; i++) {
-		gotoxy(klp, ktp + i);
+		gotoxy(klp - 1, ktp + i);
 		for (int j = 0; j < boxWid; j++) {
 			_putch(' ');
 		}
 	}
-
 }
