@@ -1,7 +1,6 @@
 /* selectmap.h */
 #pragma once
 
-#include <conio.h>
 #include <io.h>
 #include "main.h"
 

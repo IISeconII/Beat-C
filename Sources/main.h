@@ -5,7 +5,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <locale.h>
-#include <conio.h>
 #include "fun.h"
 
 #define SCREEN_WIDTH 120 // 콘솔 창 가로 길이

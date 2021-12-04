@@ -2,7 +2,6 @@
 #pragma once
 #pragma comment(lib,"winmm.lib")
 
-#include <conio.h>
 #include <time.h>
 #include <Windows.h>
 #include <mmsystem.h>

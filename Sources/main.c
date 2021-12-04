@@ -27,10 +27,3 @@ main() {
 		for (int i = 0; i < mapCount; i++) free(mapList[i]); free(mapList);
 	}
 }
-
-// stdin 버퍼 클리어
-void clearBuffer() {
-	while (_kbhit()) {
-		int _ = _getch();
-	}
-}
