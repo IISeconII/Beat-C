@@ -14,3 +14,4 @@ void movexy(int x, int y);
 void setCursor(CURSOR_TYPE curType);
 int curX();
 int curY();
+void clearBuffer();
