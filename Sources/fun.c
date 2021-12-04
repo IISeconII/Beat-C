@@ -51,3 +51,10 @@ int curY() {
 	GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &curInfo);
 	return curInfo.dwCursorPosition.Y;
 }
+
+// stdin 버퍼 클리어
+void clearBuffer() {
+	while (_kbhit()) {
+		int _ = _getch();
+	}
+}

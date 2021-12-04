@@ -2,6 +2,7 @@
 #pragma once
 
 #include <Windows.h>
+#include <conio.h>
 
 
 // HIDE: 커서 숨기기, UNDERBAR: _ 커서 보이기, BLOCK: 블록 커서 보이기
