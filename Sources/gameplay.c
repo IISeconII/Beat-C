@@ -27,6 +27,7 @@ void main_gameplay(char* _mapName) {
 		removingJudgeTxt();
 	}
 
+	clearBuffer();
 	showStats();
 	while (!_kbhit()) removingJudgeTxt();
 
