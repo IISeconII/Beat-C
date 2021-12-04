@@ -6,7 +6,6 @@
 // 맵을 선택하는 씬
 char* main_selectmap() {
 	system("cls");
-	fflush(stdin);
 	setCursor(HIDE);
 
 	gotoxy(slp, stp);
@@ -89,14 +88,14 @@ int selecting(int mapCount)
 // 맵 리스트 불러와서 maps에 넣기
 int loadMaps() {
 
-	mapPath = "maps/";
+	mapFolder = "maps";
 
 	// 맵 경로 제작 ("maps/*")
 	static char* dir = NULL;
 	if (dir == NULL) {
-		dir = malloc(strlen(mapPath)+1+1);
+		dir = malloc(strlen(mapFolder)+2+1);
 		if (dir == NULL) return -1;
-		sprintf_s(dir, strlen(dir)+1+1, "%s*", mapPath);
+		sprintf_s(dir, strlen(dir)+2+1, "%s/*", mapFolder);
 	}
 	
 

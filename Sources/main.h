@@ -23,7 +23,7 @@ enum KeyCode { // 키코드
 
 
 int key[LINE]; // 각 라인을 누르는 키 목록
-const char* mapPath; // 맵이 저장된 폴더 경로 ("maps/")
+const char* mapFolder; // 맵이 저장된 폴더 경로 ("maps")
 
 
 // selectmap.h
