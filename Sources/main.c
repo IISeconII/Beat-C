@@ -3,7 +3,7 @@
 #include "main.h"
 
 
-int main() {
+main() {
 
 	setlocale(LC_ALL, "");
 
@@ -30,5 +30,7 @@ int main() {
 
 // stdin 버퍼 클리어
 void clearBuffer() {
-	fflush(stdin);
+	while (_kbhit()) {
+		int _ = _getch();
+	}
 }
