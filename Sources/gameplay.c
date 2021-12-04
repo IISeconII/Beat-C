@@ -128,7 +128,7 @@ void drawScreen() {
 	}
 
 	// °î Á¦¸ñ
-	gotoxy(glp-6-strlen(mapName), gtp+1);
+	gotoxy(glp-6-(int)strlen(mapName), gtp+1);
 	printf("< %s >", mapName);
 }
 
