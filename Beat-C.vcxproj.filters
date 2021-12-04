@@ -24,11 +24,11 @@
     <Filter Include="소스 파일\gameplay">
       <UniqueIdentifier>{fd0dc5aa-6b7d-4aef-9cc0-4aac1d14518a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="소스 파일\함수">
-      <UniqueIdentifier>{840c1594-92fe-4264-b5bd-eba24f7bf8d9}</UniqueIdentifier>
-    </Filter>
     <Filter Include="리소스 파일\maps">
       <UniqueIdentifier>{56c6d6de-87a4-4c7a-81d7-06f4cc9156ab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\함수/라이브러리">
+      <UniqueIdentifier>{840c1594-92fe-4264-b5bd-eba24f7bf8d9}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -47,7 +47,7 @@
       <Filter>소스 파일\keysetting</Filter>
     </ClCompile>
     <ClCompile Include="Sources\fun.c">
-      <Filter>소스 파일\함수</Filter>
+      <Filter>소스 파일\함수/라이브러리</Filter>
     </ClCompile>
     <ClCompile Include="Sources\gameplay.c">
       <Filter>소스 파일\gameplay</Filter>
@@ -58,6 +58,9 @@
     <ClCompile Include="Sources\title.c">
       <Filter>소스 파일\title</Filter>
     </ClCompile>
+    <ClCompile Include="Sources\parson.c">
+      <Filter>소스 파일\함수/라이브러리</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Sources\main.h">
@@ -67,7 +70,7 @@
       <Filter>소스 파일\keysetting</Filter>
     </ClInclude>
     <ClInclude Include="Sources\fun.h">
-      <Filter>소스 파일\함수</Filter>
+      <Filter>소스 파일\함수/라이브러리</Filter>
     </ClInclude>
     <ClInclude Include="Sources\gameplay.h">
       <Filter>소스 파일\gameplay</Filter>
@@ -77,6 +80,9 @@
     </ClInclude>
     <ClInclude Include="Sources\title.h">
       <Filter>소스 파일\title</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\parson.h">
+      <Filter>소스 파일\함수/라이브러리</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
