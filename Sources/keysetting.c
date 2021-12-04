@@ -1,26 +1,26 @@
-/* keysetting.c */
+ï»¿/* keysetting.c */
 
 #include "keysetting.h"
 
 
-// Å°¸¦ ¼³Á¤ÇÏ´Â ¾À
+// í‚¤ë¥¼ ì„¤ì •í•˜ëŠ” ì”¬
 void main_keysetting() {
 
 	const int klp = 8; // keysetting left padding
 	const int ktp = 4; // keysetting top padding
-	const int gap = 5; // Å° °ø°£ »çÀÌÀÇ °£°İ (+1)
+	const int gap = 5; // í‚¤ ê³µê°„ ì‚¬ì´ì˜ ê°„ê²© (+1)
 	memset(key, 0, sizeof(key));
 
 	setCursor(BLOCK);
 	gotoxy(klp + (LINE + gap * 3 - 8) / 2, ktp);
-	puts("Å° ¼³Á¤");
+	puts("í‚¤ ì„¤ì •");
 	for (int i = 0; i < LINE; i++) {
-		gotoxy(klp + i * gap, ktp + 2); _putch('v');
+		gotoxy(klp + i * gap, ktp + 2); wprintf(L"â–½");
 	}
 
-	// Å° ÀÔ·Â
+	// í‚¤ ì…ë ¥
 	for (int i = 0; i < LINE; i++) {
-		gotoxy(klp + i * gap, ktp + 6); _putch('^');
+		gotoxy(klp + i * gap, ktp + 6); wprintf(L"â†‘");
 		
 		int k = 0;
 		for (;;) {
@@ -28,35 +28,51 @@ void main_keysetting() {
 			setCursor(BLOCK);
 			k = _getch();
 
-			if (k == 0xE0 || k == 0) { k = _getch(); continue; } // Æ¯¼öÅ°(È®ÀåÅ°) ºÒ°¡´É
-			else if (k == 27) continue; // Esc ºÒ°¡´É
-			for (int j = 0; j < i; j++) if (k == key[j]) continue; // Áßº¹µÈ Å° ºÒ°¡´É
+			BOOL able = TRUE;
+			if (k == 0xE0 || k == 0) { k = _getch(); able = FALSE; } // íŠ¹ìˆ˜í‚¤(í™•ì¥í‚¤) ë¶ˆê°€ëŠ¥
+			else if (k == 27) able = FALSE; // Esc ë¶ˆê°€ëŠ¥
+			for (int j = 0; j < i; j++) if (k == key[j]) { able = FALSE; break; } // ì¤‘ë³µëœ í‚¤ ë¶ˆê°€ëŠ¥
 
-			break;
+			if (able)
+				break;
 		}
 
-		char keyName[4];
+		wchar_t keyName[5] = L"";
 		switch (k) {
-			case 8:
-				strcpy_s(keyName, sizeof(keyName), "Bsp"); break;
-			case 13:
-				strcpy_s(keyName, sizeof(keyName), "Ent"); break;
-			case 32:
-				strcpy_s(keyName, sizeof(keyName), "Spc"); break;
+			case 8: // Backspace
+				wcscpy_s(keyName, sizeof(keyName)/sizeof(wchar_t), L"Bksp"); break;
+			case 13: // Enter
+				wcscpy_s(keyName, sizeof(keyName)/sizeof(wchar_t), L"Bksp"); break;
+			case 32: // Space
+				wcscpy_s(keyName, sizeof(keyName)/sizeof(wchar_t), L"Bksp"); break;
 			default:
-				keyName[0] = k; keyName[1] = '\0'; break;
+				keyName[0] = k + 0xFEE0 - ('a' <= k && k <= 'z' ? 'a' - 'A' : 0); keyName[1] = '\0'; break;
 		}
-		gotoxy(curX() + (strlen(keyName) == 3 ? -1 : 0), curY());
-		printf("%s", keyName);
+		gotoxy(klp + i * gap + (wcslen(keyName) == 4 ? -1 : 0), ktp + 4);
+		wprintf(L"%s", keyName);
+		
 		key[i] = k;
 
 		setCursor(HIDE);
-		gotoxy(klp + i * gap, ktp + 6); _putch(' ');
+		gotoxy(klp + i * gap, ktp + 2); wprintf(L"â–¼");
+		gotoxy(klp + i * gap, ktp + 6); wprintf(L"ã€€");
 	}
 
-	Sleep(500);
+	Sleep(180);
+	for (int r = 0; r < 2; r++) {
+		for (int i = 0; i < LINE; i++) {
+			gotoxy(klp + i * gap, ktp + 4); wprintf(L"â€•");
+		}
+		Sleep(110);
+		for (int i = 0; i < LINE; i++) {
+			gotoxy(klp + i * gap, ktp + 4); wprintf(L"%c", key[i] + 0xFEE0 - ('a' <= key[i] && key[i] <= 'z' ? 'a' - 'A' : 0));
+		}
+		Sleep(110);
+	}
+	
+	Sleep(400);
 
-	// Å¬¸®¾î
+	// í´ë¦¬ì–´
 	for (int i = 0; i < 6; i++) {
 		gotoxy(klp, ktp + i);
 		for (int j = 0; j < gap * 3 + LINE; j++) {
