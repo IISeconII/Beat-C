@@ -333,9 +333,9 @@ void hitNote(int line, int judgement) {
 	// 점수, 정확도
 	switch (judgement) {
 		case 1: // LATE
-		case 3: // FAST (200점에 66%)
+		case 3: // FAST (200점에 75%)
 			score += 200 + (int)round(200 * combo / 100.0);
-			accuracy = (accuracy * (noteCount-1) + 200/3.0) / noteCount;
+			accuracy = (accuracy * (noteCount-1) + 75) / noteCount;
 			updateUI(+1);
 			break;
 		case 2: // GOOD (300점에 100%)
