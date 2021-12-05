@@ -8,4 +8,4 @@ x64
 *.wav
 
 # 사용자 데이터
-maps/stats.json
+maps/stats.dat
