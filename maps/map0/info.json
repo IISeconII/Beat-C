@@ -1,0 +1,7 @@
+{
+	"mapFile": "map0.txt",
+	"songFile": "map0.wav",
+	"bpm": 120,
+	"fallSpeed": 150,
+	"mapLength": 1
+}
