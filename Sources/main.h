@@ -15,6 +15,7 @@
 
 enum KeyCode { // 키코드
 	BACKSPACE = 8, // 백스페이스 키코드
+	TAB = 9, // 탭 키코드
 	ENTER = 13, // 엔터 키코드
 	ESC = 27, // ESC 키코드
 	SPACE = 32, // 스페이스바 키코드
@@ -24,6 +25,7 @@ enum KeyCode { // 키코드
 
 
 int key[LINE]; // 각 라인을 누르는 키 목록
+wchar_t keyName[LINE][5]; // 각 키의 이름
 const char* mapFolder; // 맵이 저장된 폴더 경로 ("maps")
 
 
