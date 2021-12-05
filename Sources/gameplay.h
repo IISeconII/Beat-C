@@ -35,7 +35,9 @@ int score; // 점수
 int combo; // 콤보
 double accuracy; // 정확도
 int noteCount; // 노트가 내려온 횟수 (판정 계산에 사용)
+clock_t pauseTimer; // 일시정지 상태였던 시간
 
+BOOL paused; // 일시정지 됐는가?
 BOOL songPlayed; // BGM이 재생됐는가?
 BOOL gameEnd; // 게임이 끝났는가?
 
@@ -61,6 +63,8 @@ void keyInput();
 void press(int line);
 void hitNote(int line, int judgement);
 void removingJudgeTxt();
+
+void pause();
 
 void playSong();
 void updateUI(int comboPlus);

@@ -46,9 +46,10 @@ void init()
 	combo = 0;
 	accuracy = 100;
 	noteCount = 0;
+	pauseTimer = 0;
 	memset(note, x, sizeof(note));
 	memset(shouldRemove, FALSE, LINE);
-
+	
 	system("cls");
 }
 
@@ -165,7 +166,7 @@ void fallingNote() {
 	static clock_t endTimer = 0;
 	static BOOL end = FALSE;
 
-	if (clock() - timer >= runtime) {
+	if (clock() - (timer + pauseTimer) >= runtime) {
 
 		// miss 노트 검사
 		for (int i = 0; i < LINE; i++) {
@@ -216,7 +217,7 @@ void fallingNote() {
 
 	// 맵의 마지막 노트를 만들면 좀 있다 게임 종료
 	if (end) {
-		if (clock() - endTimer >= FALLSPEED * HEI + 1000) {
+		if (clock() - (endTimer + pauseTimer) >= FALLSPEED * HEI + 1000) {
 			timer = 0;
 			runtime = 0;
 			gameEnd = TRUE;
@@ -254,6 +255,10 @@ void keyInput() {
 		k = _getch();
 		if (k == 0xE0 || k == 0)
 			k = _getch();
+
+		switch (k) {
+			case ESC: pause(); break; // ESC -> 일시정지
+		}
 
 		for (int i = 0; i < LINE; i++) {
 			if (k == key[i]) {
@@ -341,6 +346,42 @@ void removingJudgeTxt() {
 		}
 	}
 	
+}
+
+
+// 일시정지
+void pause() {
+	// 정지
+	if (!paused) {
+		paused = TRUE;
+		clock_t pauseStart = clock();
+
+		// 창 클리어
+		for (int i = 0; i < HEI; i++) {
+			gotoxy(glp, gtp + i);
+			if (i == HEI-2)
+				for (int j = 0; j < LINE * NOTETHK; j++)
+					_putch('-'); // 판정선
+			else
+				for (int j = 0; j < LINE * NOTETHK; j++)
+					_putch(' ');
+			printf("\n");
+		}
+		gotoxy(glp + LINE*NOTETHK/2 - 3, gtp + HEI/2-1); puts("Paused");
+
+		// ESC를 누를 때까지 대기
+		int k = 0;
+		while (k != ESC) {
+			k = _getch();
+			if (k == 0xE0 || k == 0)
+				k = _getch();
+		}
+		
+		paused = FALSE;
+		gotoxy(glp + LINE*NOTETHK/2 - 3, gtp + HEI/2-1); puts("      ");
+		countdown();
+		pauseTimer += clock() - pauseStart; // 일시정지 중이었던 시간을 빼줌
+	}
 }
 
 

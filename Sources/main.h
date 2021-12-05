@@ -16,6 +16,7 @@
 enum KeyCode { // 키코드
 	BACKSPACE = 8, // 백스페이스 키코드
 	ENTER = 13, // 엔터 키코드
+	ESC = 27, // ESC 키코드
 	SPACE = 32, // 스페이스바 키코드
 	UP = 72, // 위쪽 방향키 키코드
 	DOWN = 80 // 아래쪽 방향키 키코드
