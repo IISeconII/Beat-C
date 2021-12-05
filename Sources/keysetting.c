@@ -20,7 +20,6 @@ void main_keysetting() {
 	}
 
 	// 키 입력
-	wchar_t keyName[LINE][5] = {0,};
 	for (int i = 0; i < LINE; i++) {
 		gotoxy(klp + i*gap, ktp + 6); wprintf(L"↑");
 		
@@ -33,11 +32,16 @@ void main_keysetting() {
 			BOOL able = TRUE;
 			if (k == 0xE0 || k == 0) { k = _getch(); able = FALSE; } // 특수키(확장키) 불가능
 			else if (k == 27) able = FALSE; // Esc 불가능
+			else if (strchr("`-=[]\\;',./", k)) able = FALSE; // 기타 문자
 			for (int j = 0; j < i; j++) if (k == key[j]) { able = FALSE; break; } // 중복된 키 불가능
 
 			if (able)
 				break;
 		}
+		setCursor(HIDE);
+
+		if ('a' <= k && k <= 'z')
+			k -= 'a' - 'A'; // 대소문자 통일
 
 		switch (k) {
 			case BACKSPACE:
@@ -46,15 +50,17 @@ void main_keysetting() {
 				wcscpy_s(keyName[i], sizeof(keyName[i])/sizeof(wchar_t), L"Entr"); break;
 			case SPACE:
 				wcscpy_s(keyName[i], sizeof(keyName[i])/sizeof(wchar_t), L"Spce"); break;
+			case TAB:
+				wcscpy_s(keyName[i], sizeof(keyName[i])/sizeof(wchar_t), L"Tab"); break;
 			default:
-				keyName[i][0] = k + 0xFEE0 - ('a' <= k && k <= 'z' ? 'a' - 'A' : 0); keyName[i][1] = '\0'; break;
+				swprintf(keyName[i], sizeof(keyName[i])/sizeof(wchar_t), L" %c ", k + 0xFEE0); break;
 		}
-		gotoxy(klp + i*gap - (wcslen(keyName[i])==4?1:0), ktp + 4);
+
+		gotoxy(klp + i*gap - 1, ktp + 4);
 		wprintf(L"%s", keyName[i]);
 		
 		key[i] = k;
 
-		setCursor(HIDE);
 		gotoxy(klp + i*gap, ktp + 2); wprintf(L"▼");
 		gotoxy(klp + i*gap, ktp + 6); wprintf(L"　");
 	}
@@ -67,7 +73,7 @@ void main_keysetting() {
 		}
 		Sleep(110);
 		for (int i = 0; i < LINE; i++) {
-			gotoxy(klp + i*gap - (wcslen(keyName[i])==4?1:0), ktp + 4); wprintf(L"%s", keyName[i]);
+			gotoxy(klp + i*gap - 1, ktp + 4); wprintf(L"%s", keyName[i]);
 		}
 		Sleep(110);
 	}
