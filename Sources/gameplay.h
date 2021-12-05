@@ -53,7 +53,7 @@ extern char* hsfPath;
 void main_gameplay(char* _mapName);
 
 void init();
-int readNoteMapFile();
+int readMap();
 
 void drawScreen();
 void countdown();

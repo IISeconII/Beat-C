@@ -9,7 +9,7 @@ void main_gameplay(char* _mapName) {
 
 	init();
 
-	if (readNoteMapFile() == -1) {
+	if (readMap() == -1) {
 		system("cls");
 		gotoxy(1, 1);
 		puts("맵 파일이 존재하지 않거나 맵을 열 수 없습니다.");
@@ -54,7 +54,7 @@ void init()
 }
 
 // 노트 맵 파일을 읽어서 note에 저장한다.
-int readNoteMapFile() {
+int readMap() {
 	FILE *f;
 
 	// 맵 폴더 위치 설정 (maps/mapName/)
