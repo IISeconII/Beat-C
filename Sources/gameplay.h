@@ -18,7 +18,7 @@
 #define x ' ' // 노트 없음
 
 
-const int glp = (SCREEN_WIDTH/2) - (LINE/2 * NOTETHK); // gameplay left padding
+const int glp = (SCREEN_WIDTH/2) - (LINE * NOTETHK / 2); // gameplay left padding
 const int gtp = 0; // gameplay top padding
 
 char* mapName; // 맵 이름
@@ -44,6 +44,7 @@ BOOL gameEnd; // 게임이 끝났는가?
 // 판정 텍스트를 지워야 하는가? (removingJudgeTxt() 참조)
 // 0: false, 1: 제거 신호, 2: 제거 타이머 작동 중
 int shouldRemove[LINE];
+BOOL isPressed[LINE]; // 그 키(라인)가 눌렸는가?
 
 // gameplay.h
 extern char* hsfPath;

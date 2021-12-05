@@ -83,9 +83,10 @@ int readNoteMapFile() {
 	// 맵 정보 읽기
 	mapLength = (int)json_object_get_number(mapInfo, "mapLength");
 	FALLSPEED = (int)json_object_get_number(mapInfo, "fallSpeed");
-	if (FALLSPEED == 0) {
+
+	if (FALLSPEED == 0) { // FALLSPEED를 명시하지 않았을 경우 BPM으로부터 추출 (16비트 기준)
 		const double bpm = (int)json_object_get_number(mapInfo, "bpm");
-		FALLSPEED = (int)round(60 / bpm * 1000);
+		FALLSPEED = (int)round(60 / bpm / 4 * 1000);
 	}
 
 	// 노트 읽어서 map에 넣기
@@ -117,26 +118,35 @@ int readNoteMapFile() {
 // 화면 맵을 그린다.
 void drawScreen() {
 
-	// 양옆 박스
-	for (int i = 0; i < HEI; i++) {
-		gotoxy(glp - 1, gtp + i); _putch('|');
-		gotoxy(glp + LINE*NOTETHK, gtp + i); _putch('|');
+	// 박스
+	for (int i = 0; i <= HEI; i++) {
+		gotoxy(glp - 1, gtp + i);
+
+		_putch('|');
+
+		for (int j = 0; j < LINE * NOTETHK; j++) {
+			if (i == HEI-2) {
+				wprintf(L"□"); j++; // 판정선
+			}
+			else if (i == HEI) {
+				_putch('^'); // 데드라인
+			}
+			else {
+				_putch(' '); // 노트 있는 빈칸
+			}
+		}
+
+		_putch('|');
 	}
 
-	// 판정선
-	gotoxy(glp - 1, gtp + HEI-2);
-	for (int j = 0; j <= LINE * NOTETHK + 1; j++) {
-		_putch('-');
-	}
-
-	// 데드라인
-	gotoxy(glp - 1, gtp + HEI);
-	for (int j = 0; j <= LINE * NOTETHK + 1; j++) {
-		_putch('^');
+	// 키
+	for (int i = 0; i < LINE; i++) {
+		gotoxy(glp + i * NOTETHK + 1, gtp + HEI + 2);
+		wprintf(L"%s", keyName[i]);
 	}
 
 	// 곡 제목
-	gotoxy(glp-6-(int)strlen(mapName), gtp+1);
+	gotoxy(glp - 6 - (int)strlen(mapName), gtp + 1);
 	printf("< %s >", mapName);
 }
 
@@ -151,6 +161,12 @@ void countdown() {
 	gotoxy(glp + LINE*NOTETHK/2 - 3, gtp + HEI / 2 - 1);
 	puts("Start!");
 	Sleep(500);
+
+	// 키
+	gotoxy(glp + 1, gtp + HEI + 2);
+	for (int i = 0; i < LINE * NOTETHK; i++) {
+		_putch(' ');
+	}
 }
 
 
@@ -231,7 +247,7 @@ void showNotes() {
 	for (int i = 0; i < HEI; i++) {
 		gotoxy(glp, gtp + i);
 		for (int j = 0; j < LINE; j++) {
-			for (int k = 0; k < NOTETHK/2; k++) {
+			for (int k = 0; k < NOTETHK / 2; k++) {
 				wprintf(L"%ws", note[i][j] == N ? L"■" : L"  ");
 			}
 		}
@@ -241,16 +257,44 @@ void showNotes() {
 	for (int i = 0; i < LINE; i++) {
 		gotoxy(glp + i * NOTETHK, gtp + HEI - 2);
 		if (note[HEI - 2][i] == x) {
-			for (int j = 0; j < NOTETHK; j++)
-				_putch('-');
+			for (int j = 0; j < NOTETHK / 2; j++) {
+				if (isPressed[i])
+					wprintf(L"▣");
+				else
+					wprintf(L"□");
+			}
+				
 		}
 	}
 }
 
 // 키보드 입력을 감지한다.
 void keyInput() {
-	static int k;
 
+	if (_kbhit()) {
+		for (int i = 0; i < LINE; i++) {
+			if (GetAsyncKeyState(key[i])) {
+				if (!isPressed[i]) { // 누름
+					press(i);
+
+					gotoxy(glp + i * NOTETHK, gtp + HEI - 2);
+					for (int j = 0; j < NOTETHK / 2; j++)
+						wprintf(L"▣");
+
+					isPressed[i] = TRUE;
+				}
+			}
+			else { // 뗌
+				gotoxy(glp + i * NOTETHK, gtp + HEI - 2);
+				for (int j = 0; j < NOTETHK / 2; j++)
+					wprintf(L"□");
+
+				isPressed[i] = FALSE;
+			}
+		}
+	}
+
+	/*static int k;
 	if (_kbhit()) {
 		k = _getch();
 		if (k == 0xE0 || k == 0)
@@ -259,13 +303,7 @@ void keyInput() {
 		switch (k) {
 			case ESC: pause(); break; // ESC -> 일시정지
 		}
-
-		for (int i = 0; i < LINE; i++) {
-			if (k == key[i]) {
-				press(i);
-			}
-		}
-	}
+	}*/
 }
 
 // key가 눌렸을 때 호출된다.
@@ -357,16 +395,7 @@ void pause() {
 		clock_t pauseStart = clock();
 
 		// 창 클리어
-		for (int i = 0; i < HEI; i++) {
-			gotoxy(glp, gtp + i);
-			if (i == HEI-2)
-				for (int j = 0; j < LINE * NOTETHK; j++)
-					_putch('-'); // 판정선
-			else
-				for (int j = 0; j < LINE * NOTETHK; j++)
-					_putch(' ');
-			printf("\n");
-		}
+		drawScreen();
 		gotoxy(glp + LINE*NOTETHK/2 - 3, gtp + HEI/2-1); puts("Paused");
 
 		// ESC를 누를 때까지 대기
@@ -387,7 +416,7 @@ void pause() {
 
 // 노래(BGM)를 재생한다.
 void playSong() {
-	const char* songName = json_object_get_string(mapInfo, "songFile");
+	/*const char* songName = json_object_get_string(mapInfo, "songFile");
 	const int pathSize = (int)strlen(mapDir) + (int)strlen(songName) + 1;
 	char* songPath = malloc(pathSize);
 	if (songPath == NULL) return;
@@ -396,7 +425,7 @@ void playSong() {
 	PlaySound(songPath, 0, SND_ASYNC);
 	gotoxy(30, 10); puts("play"); // debug
 
-	free(songPath);
+	free(songPath);*/
 }
 
 // 점수 & 콤보 UI 업데이트
