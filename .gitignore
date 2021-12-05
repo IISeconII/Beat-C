@@ -6,3 +6,6 @@ x64
 
 # 음악 저작권
 *.wav
+
+# 사용자 데이터
+maps/stats.json
