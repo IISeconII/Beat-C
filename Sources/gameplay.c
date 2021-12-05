@@ -256,14 +256,13 @@ void showNotes() {
 	// ÆÇÁ¤¼±
 	for (int i = 0; i < LINE; i++) {
 		gotoxy(glp + i * NOTETHK, gtp + HEI - 2);
-		if (note[HEI - 2][i] == x) {
+		if (note[HEI-2][i] == x) {
 			for (int j = 0; j < NOTETHK / 2; j++) {
 				if (isPressed[i])
 					wprintf(L"¢Ã");
 				else
 					wprintf(L"¡à");
 			}
-				
 		}
 	}
 }
@@ -287,7 +286,8 @@ void keyInput() {
 			else { // ¶À
 				gotoxy(glp + i * NOTETHK, gtp + HEI - 2);
 				for (int j = 0; j < NOTETHK / 2; j++)
-					wprintf(L"¡à");
+					if (note[HEI-2][i] == x)
+						wprintf(L"¡à");
 
 				isPressed[i] = FALSE;
 			}
