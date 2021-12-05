@@ -24,64 +24,13 @@ char* main_selectmap() {
 	}
 
 	else {
-		gotoxy(slp + 30, stp-1); puts("키를 설정하려면");
-		gotoxy(slp + 30, stp);   puts("S키를 누르세요");
+		gotoxy(8, 13); printf("키를 설정하려면 ");
+		gotoxy(8, 14); printf("S키를 누르세요");
 	}
 
 	int pointer = selecting(mapCount);
+	blink(pointer);
 	return mapList[pointer];
-}
-
-
-// 맵 리스트에서 맵 선택하기
-int selecting(int mapCount)
-{
-	int pointer = 0;
-	gotoxy(slp, stp+2+pointer); _putch('>');
-
-	Sleep(300);
-	clearBuffer();
-
-	int key;
-	BOOL selected = FALSE;
-	while (!selected) {
-
-		key = _getch();
-		if (key == 0xE0 || key == 0)
-			key = _getch();
-
-		switch (key) {
-
-			case 's':
-				gotoxy(slp, stp+2+pointer); _putch(' ');
-				main_keysetting();
-				gotoxy(slp, stp+2+pointer); _putch('>');
-				break;
-
-			case UP:
-				gotoxy(slp, stp+2+pointer); _putch(' ');
-				pointer--;
-				if (pointer < 0)
-					pointer = mapCount - 1;
-				break;
-
-			case DOWN:
-				gotoxy(slp, stp + 2 + pointer); _putch(' ');
-				pointer++;
-				if (pointer >= mapCount)
-					pointer = 0;
-				break;
-
-			case ENTER:
-			case SPACE:
-				selected = TRUE;
-				break;
-		}
-
-		gotoxy(slp, stp+2+pointer); _putch('>');
-	}
-
-	return pointer;
 }
 
 
@@ -97,7 +46,7 @@ int loadMaps() {
 		if (dir == NULL) return -1;
 		sprintf_s(dir, strlen(dir)+2+1, "%s/*", mapFolder);
 	}
-	
+
 	// finddata 세팅
 	struct _finddata_t fd;
 	intptr_t handle = _findfirst(dir, &fd);
@@ -124,12 +73,12 @@ int loadMaps() {
 		if (!strcmp(fd.name, ".") || !strcmp(fd.name, "..") || !(fd.attrib & _A_SUBDIR)) { // . 또는 .. 또는 폴더가 아니면
 			i--; continue;
 		}
-		
+
 		mapList[i] = malloc(strlen(fd.name)+1);
 		if (mapList[i] == NULL) return -1;
 		strcpy_s(mapList[i], strlen(fd.name)+1, fd.name);
 	}
-	
+
 	_findclose(handle);
 
 
@@ -150,9 +99,82 @@ int loadMaps() {
 
 	// 리스트 & 점수 화면에 띄우기
 	for (int i = 0; i < mapCount; i++) {
-		gotoxy(slp+2, stp+2+i); puts(mapList[i]);
-		gotoxy(slp+2+30, stp+2+i); printf("%d", (int)json_object_get_number(highScore, mapList[i]));
+		gotoxy(slp+3, stp+3+i); puts(mapList[i]);
+		gotoxy(slp+3+30, stp+3+i); printf("%d", (int)json_object_get_number(highScore, mapList[i]));
 	}
 
 	return 0;
+}
+
+// 맵 리스트에서 맵 선택하기
+int selecting(int mapCount)
+{
+	int pointer = 0;
+	gotoxy(slp, stp+3+pointer); wprintf(L"▷");
+
+	Sleep(200);
+	clearBuffer();
+
+	int key;
+	BOOL selected = FALSE;
+	while (!selected) {
+
+		key = _getch();
+		if (key == 0xE0 || key == 0)
+			key = _getch();
+
+		switch (key) {
+
+			case 's':
+				gotoxy(slp, stp+3+pointer); wprintf(L"　");
+				main_keysetting();
+				gotoxy(slp, stp+3+pointer); wprintf(L"▷");
+				break;
+
+			case UP:
+				gotoxy(slp, stp+3+pointer); wprintf(L"　");
+				pointer--;
+				if (pointer < 0)
+					pointer = mapCount - 1;
+				break;
+
+			case DOWN:
+				gotoxy(slp, stp+3+pointer); wprintf(L"　");
+				pointer++;
+				if (pointer >= mapCount)
+					pointer = 0;
+				break;
+
+			case ENTER:
+			case SPACE:
+				gotoxy(slp, stp+3+pointer); wprintf(L" ▶");
+				selected = TRUE;
+				break;
+		}
+
+		if (!selected) {
+			gotoxy(slp, stp+3+pointer); wprintf(L"▷");
+		}
+	}
+
+	return pointer;
+}
+
+// 선택했다면 선택한 곡 텍스트 깜빡이기
+void blink(int pointer) {
+	gotoxy(slp+3, stp+3+pointer);
+	_putch(' ');
+
+	for (int i = 0; i < 2; i++) {
+		gotoxy(slp+4, stp+3+pointer);
+		for (int j = 0; j < strlen(mapList[pointer]); j++)
+			_putch(' ');
+		Sleep(150);
+
+		gotoxy(slp+4, stp+3+pointer);
+		printf("%s", mapList[pointer]);
+		Sleep(150);
+	}
+
+	Sleep(250);
 }

@@ -9,8 +9,8 @@
 int mapCount; // 맵의 개수
 char** mapList; // 맵 선택 창에서 띄울 맵 목록
 
-const int slp = 34; // selectmap left padding
-const int stp = 3; // selectmap top padding
+const int slp = 32; // selectmap left padding
+const int stp = 2; // selectmap top padding
 
 static char mapGuideDocs[][82] = { // 맵 제작법 텍스트
 	":( 맵이 없네요..",
@@ -35,5 +35,6 @@ char* statsPath; // stats.dat 파일 경로 (JSON) ("maps/stats.dat")
 
 
 char* main_selectmap();
-int selecting(int mapCount);
 int loadMaps();
+int selecting(int mapCount);
+void blink(int pointer);
