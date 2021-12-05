@@ -3,6 +3,7 @@
 # 임시 빌드 폴더
 Debug
 x64
+Release
 
 # 음악 저작권
 *.wav
