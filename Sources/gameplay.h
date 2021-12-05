@@ -47,7 +47,7 @@ int shouldRemove[LINE];
 BOOL isPressed[LINE]; // 그 키(라인)가 눌렸는가?
 
 // gameplay.h
-extern char* hsfPath;
+extern char* statsPath;
 
 
 void main_gameplay(char* _mapName);

@@ -136,14 +136,14 @@ int loadMaps() {
 	// 하이스코어 데이터 열기 (없으면 생성)
 	const char* highScoreFileName = "stats.dat";
 	const int hsfPathSize = (int)strlen(mapFolder) + 1 + (int)strlen(highScoreFileName) + 1;
-	hsfPath = malloc(hsfPathSize);
-	if (hsfPath == NULL) return -1;
-	sprintf_s(hsfPath, hsfPathSize, "%s/%s", mapFolder, highScoreFileName);
+	statsPath = malloc(hsfPathSize);
+	if (statsPath == NULL) return -1;
+	sprintf_s(statsPath, hsfPathSize, "%s/%s", mapFolder, highScoreFileName);
 
-	JSON_Value* rootValue = json_parse_file(hsfPath);
+	JSON_Value* rootValue = json_parse_file(statsPath);
 	if (rootValue == NULL) {
 		rootValue = json_value_init_object();
-		json_serialize_to_file_pretty(rootValue, hsfPath);
+		json_serialize_to_file_pretty(rootValue, statsPath);
 	}
 	JSON_Object* highScore = json_value_get_object(rootValue);
 

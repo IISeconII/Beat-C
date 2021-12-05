@@ -469,10 +469,10 @@ void showStats() {
 	printf("아무 키나 누르세요");
 
 	// 점수 저장
-	JSON_Value *rootValue = json_parse_file(hsfPath);
+	JSON_Value *rootValue = json_parse_file(statsPath);
 	JSON_Object *highScore = json_value_get_object(rootValue);
 	if (json_object_get_number(highScore, mapName) < score) { // 하이 스코어를 넘으면 갱신
 		json_object_set_number(highScore, mapName, score);
-		json_serialize_to_file_pretty(rootValue, hsfPath);
+		json_serialize_to_file_pretty(rootValue, statsPath);
 	}
 }

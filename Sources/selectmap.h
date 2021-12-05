@@ -31,7 +31,7 @@ static char mapGuideDocs[][82] = { // 맵 제작법 텍스트
 	"...@",
 };
 
-char* hsfPath; // stats.dat 파일 경로 (JSON) ("maps/stats.dat")
+char* statsPath; // stats.dat 파일 경로 (JSON) ("maps/stats.dat")
 
 
 char* main_selectmap();
