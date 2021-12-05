@@ -22,7 +22,6 @@ void main_gameplay(char* _mapName) {
 	updateUI(0);
 
 	while (!gameEnd) {
-		gotoxy(0, 0); printf("%d", clock());
 		fallingNote();
 		keyInput();
 		removingJudgeTxt();
@@ -70,6 +69,7 @@ int readNoteMapFile() {
 
 	// info.json 객체 생성
 	JSON_Value *jsonValue = json_parse_file(infoPath);
+	if (jsonValue == NULL) return -1;
 	mapInfo = json_value_get_object(jsonValue);
 
 	// 맵 파일 경로 설정 (maps/mapName/mapName.txt)
@@ -79,13 +79,19 @@ int readNoteMapFile() {
 	if (notePath == NULL) return -1;
 	sprintf_s(notePath, notePathSize, "%s%s", mapDir, noteFile);
 
-	// 맵 읽어서 map에 넣기
+	// 맵 정보 읽기
 	mapLength = (int)json_object_get_number(mapInfo, "mapLength");
-	fopen_s(&f, notePath, "r");
-	if (f == NULL) return -1;
+	FALLSPEED = (int)json_object_get_number(mapInfo, "fallSpeed");
+	if (FALLSPEED == 0) {
+		const double bpm = (int)json_object_get_number(mapInfo, "bpm");
+		FALLSPEED = (int)round(60 / bpm * 1000);
+	}
 
+	// 노트 읽어서 map에 넣기
 	map = malloc(mapLength * sizeof(char*));
 	if (map == NULL) return -1;
+	fopen_s(&f, notePath, "r");
+	if (f == NULL) return -1;
 
 	// 한 줄씩 읽기
 	char* line;
@@ -151,9 +157,9 @@ void countdown() {
 // 노트를 만들고, 화면 밖으로 나가면 없앤다.
 void fallingNote() {
 	static clock_t timer = 0;
-	if (timer == 0)
-		timer = clock();
-	static clock_t runtime = FALLSPEED;
+	if (timer == 0) timer = clock();
+	static clock_t runtime = 0;
+	if (runtime == 0) runtime = FALLSPEED;
 
 	// 모든 노트가 만들어지고 좀 있다가 게임을 종료시키기 위한 타이머
 	static clock_t endTimer = 0;
@@ -190,12 +196,8 @@ void fallingNote() {
 
 			// 맵의 마지막 노트를 만들면 좀 있다 게임 종료
 			if (mapIndex == mapLength) {
-
-				gotoxy(30, 10); puts("end"); // debug
-
 				end = TRUE;
 				endTimer = clock();
-
 			}
 		}
 
@@ -215,9 +217,8 @@ void fallingNote() {
 	// 맵의 마지막 노트를 만들면 좀 있다 게임 종료
 	if (end) {
 		if (clock() - endTimer >= FALLSPEED * HEI + 1000) {
-
-			gotoxy(30, 11); puts("gameEnd"); // debug
-
+			timer = 0;
+			runtime = 0;
 			gameEnd = TRUE;
 			end = FALSE;
 		}
@@ -379,8 +380,8 @@ void updateUI(int comboPlus) {
 	printf("Accuracy: %-3.3f%%", accuracy);
 
 	// [debug] noteCount
-	gotoxy(glp + LINE * NOTETHK + 2, gtp + 6);
-	printf("%d", noteCount);
+	/*gotoxy(glp + LINE * NOTETHK + 2, gtp + 6);
+	printf("%d", noteCount);*/
 }
 
 
@@ -396,4 +397,12 @@ void showStats() {
 	printf("메인 화면으로 돌아가려면");
 	gotoxy(glp + 1, gtp + HEI/2+3);
 	printf("아무 키나 누르세요");
+
+	// 점수 저장
+	JSON_Value *rootValue = json_parse_file(hsfPath);
+	JSON_Object *highScore = json_value_get_object(rootValue);
+	if (json_object_get_number(highScore, mapName) < score) { // 하이 스코어를 넘으면 갱신
+		json_object_set_number(highScore, mapName, score);
+		json_serialize_to_file_pretty(rootValue, hsfPath);
+	}
 }

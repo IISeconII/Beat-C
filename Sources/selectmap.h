@@ -3,6 +3,7 @@
 
 #include <io.h>
 #include "main.h"
+#include "parson.h"
 
 
 int mapCount; // 맵의 개수
@@ -29,6 +30,8 @@ static char mapGuideDocs[][82] = { // 맵 제작법 텍스트
 	"....",
 	"...@",
 };
+
+char* hsfPath; // stats.json 파일 경로 ("maps/stats.json")
 
 
 char* main_selectmap();

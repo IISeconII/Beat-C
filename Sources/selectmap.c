@@ -98,7 +98,6 @@ int loadMaps() {
 		sprintf_s(dir, strlen(dir)+2+1, "%s/*", mapFolder);
 	}
 	
-
 	// finddata 세팅
 	struct _finddata_t fd;
 	intptr_t handle = _findfirst(dir, &fd);
@@ -109,7 +108,7 @@ int loadMaps() {
 
 	// 맵 개수 구하기
 	while (_findnext(handle, &fd) != -1) {
-		if (!strcmp(fd.name, ".."))
+		if (!strcmp(fd.name, "..") || !(fd.attrib & _A_SUBDIR)) // .. 또는 폴더가 아니면
 			continue;
 		mapCount++;
 	}
@@ -119,12 +118,11 @@ int loadMaps() {
 	if (mapList == NULL) return -1;
 
 	handle = _findfirst(dir, &fd);
-	for (int i = 0; i < mapCount; i++) {
+	for (int i = 0; i <= mapCount; i++) {
 		if (_findnext(handle, &fd) == -1)
 			break;
-		if (!strcmp(fd.name, ".") || !strcmp(fd.name, "..")) {
-			i--;
-			continue;
+		if (!strcmp(fd.name, ".") || !strcmp(fd.name, "..") || !(fd.attrib & _A_SUBDIR)) { // . 또는 .. 또는 폴더가 아니면
+			i--; continue;
 		}
 		
 		mapList[i] = malloc(strlen(fd.name)+1);
@@ -135,13 +133,26 @@ int loadMaps() {
 	_findclose(handle);
 
 
-	// 리스트 화면에 띄우기
+	// 하이스코어 데이터 열기 (없으면 생성)
+	const char* highScoreFileName = "stats.json";
+	const int hsfPathSize = (int)strlen(mapFolder) + 1 + (int)strlen(highScoreFileName) + 1;
+	hsfPath = malloc(hsfPathSize);
+	if (hsfPath == NULL) return -1;
+	sprintf_s(hsfPath, hsfPathSize, "%s/%s", mapFolder, highScoreFileName);
+
+	JSON_Value* rootValue = json_parse_file(hsfPath);
+	if (rootValue == NULL) {
+		rootValue = json_value_init_object();
+		json_serialize_to_file_pretty(rootValue, hsfPath);
+	}
+	JSON_Object* highScore = json_value_get_object(rootValue);
+
+
+	// 리스트 & 점수 화면에 띄우기
 	for (int i = 0; i < mapCount; i++) {
-		gotoxy(slp+2, stp+2+i);
-		puts(mapList[i]);
+		gotoxy(slp+2, stp+2+i); puts(mapList[i]);
+		gotoxy(slp+2+30, stp+2+i); printf("%d", (int)json_object_get_number(highScore, mapList[i]));
 	}
 
 	return 0;
 }
-
-
