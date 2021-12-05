@@ -3,5 +3,6 @@
 	"songFile": "R8.wav",
 	"bpm": 180,
 	"fallSpeed": 83,
-	"mapLength": 897
+	"mapLength": 897,
+	"offset": 4
 }

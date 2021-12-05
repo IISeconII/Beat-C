@@ -197,7 +197,7 @@ void fallingNote() {
 				note[HEI-i][j] = note[HEI-(i+1)][j];
 
 				// 노트가 처음 판정선에 닿았을 때 BGM 재생
-				if (!songPlayed && i == 2 && note[HEI-i][j] == N) {
+				if (!songPlayed && i == 2 + json_object_get_number(mapInfo, "offset") && note[HEI - i][j] == N) {
 					playSong();
 					songPlayed = TRUE;
 				}
@@ -420,12 +420,12 @@ void playSong() {
 	const int pathSize = (int)strlen(mapDir) + (int)strlen(songName) + 1;
 	char* songPath = malloc(pathSize);
 	if (songPath == NULL) return;
-	sprintf_s(songPath, pathSize, "%s%s", mapDir, songName);
+	sprintf_s(songPath, pathSize, "%s%s", mapDir, songName);*/
 
-	PlaySound(songPath, 0, SND_ASYNC);
+	PlaySound(L"maps/R8/R8.wav", 0, SND_ASYNC); // 임시
 	gotoxy(30, 10); puts("play"); // debug
 
-	free(songPath);*/
+	//free(songPath);
 }
 
 // 점수 & 콤보 UI 업데이트
