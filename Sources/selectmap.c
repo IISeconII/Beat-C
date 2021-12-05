@@ -134,7 +134,7 @@ int loadMaps() {
 
 
 	// 하이스코어 데이터 열기 (없으면 생성)
-	const char* highScoreFileName = "stats.json";
+	const char* highScoreFileName = "stats.dat";
 	const int hsfPathSize = (int)strlen(mapFolder) + 1 + (int)strlen(highScoreFileName) + 1;
 	hsfPath = malloc(hsfPathSize);
 	if (hsfPath == NULL) return -1;
