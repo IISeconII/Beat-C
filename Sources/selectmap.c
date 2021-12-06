@@ -24,8 +24,9 @@ char* main_selectmap() {
 	}
 
 	else {
+		setColor(GRAY);
 		gotoxy(8, 13); printf("키를 설정하려면 ");
-		gotoxy(8, 14); printf("S키를 누르세요");
+		gotoxy(8, 14); wprintf(L"Ｓ키를 누르세요");
 	}
 
 	int pointer = selecting(mapCount);
@@ -98,9 +99,18 @@ int loadMaps() {
 
 
 	// 리스트 & 점수 화면에 띄우기
+	setColor(YELLOW); gotoxy(slp+3, stp+3);
+	printf("곡");
+	setColor(GREEN); gotoxy(slp+3+30, stp+3);
+	printf("하이스코어");
+	setColor(DARK_GRAY); gotoxy(slp+2, stp+4);
+	wprintf(L"──────────────────────────────────────────");
+
 	for (int i = 0; i < mapCount; i++) {
-		gotoxy(slp+3, stp+3+i); puts(mapList[i]);
-		gotoxy(slp+3+30, stp+3+i); printf("%d", (int)json_object_get_number(highScore, mapList[i]));
+		setColor(YELLOW);
+		gotoxy(slp+3, stp+5+i); puts(mapList[i]);
+		setColor(GREEN);
+		gotoxy(slp+3+30, stp+5+i); printf("%d", (int)json_object_get_number(highScore, mapList[i]));
 	}
 
 	return 0;
@@ -110,9 +120,11 @@ int loadMaps() {
 int selecting(int mapCount)
 {
 	int pointer = 0;
-	gotoxy(slp, stp+3+pointer); wprintf(L"▷");
+	setColor(WHITE);
+	gotoxy(slp, stp+5+pointer); wprintf(L"▷");
 
-	Sleep(200);
+	// 이전에 누르고 있었던 엔터/스페이스바를 뗄 때까지 대기
+	while (GetAsyncKeyState(VK_RETURN) || GetAsyncKeyState(VK_SPACE));
 	clearBuffer();
 
 	int key;
@@ -126,20 +138,20 @@ int selecting(int mapCount)
 		switch (key) {
 
 			case 's':
-				gotoxy(slp, stp+3+pointer); wprintf(L"　");
+				gotoxy(slp, stp+5+pointer); wprintf(L"　");
 				main_keysetting();
-				gotoxy(slp, stp+3+pointer); wprintf(L"▷");
+				gotoxy(slp, stp+5+pointer); wprintf(L"▷");
 				break;
 
 			case UP:
-				gotoxy(slp, stp+3+pointer); wprintf(L"　");
+				gotoxy(slp, stp+5+pointer); wprintf(L"　");
 				pointer--;
 				if (pointer < 0)
 					pointer = mapCount - 1;
 				break;
 
 			case DOWN:
-				gotoxy(slp, stp+3+pointer); wprintf(L"　");
+				gotoxy(slp, stp+5+pointer); wprintf(L"　");
 				pointer++;
 				if (pointer >= mapCount)
 					pointer = 0;
@@ -147,13 +159,13 @@ int selecting(int mapCount)
 
 			case ENTER:
 			case SPACE:
-				gotoxy(slp, stp+3+pointer); wprintf(L" ▶");
+				gotoxy(slp, stp+5+pointer); wprintf(L" ▶");
 				selected = TRUE;
 				break;
 		}
 
 		if (!selected) {
-			gotoxy(slp, stp+3+pointer); wprintf(L"▷");
+			gotoxy(slp, stp+5+pointer); wprintf(L"▷");
 		}
 	}
 
@@ -162,19 +174,19 @@ int selecting(int mapCount)
 
 // 선택했다면 선택한 곡 텍스트 깜빡이기
 void blink(int pointer) {
-	gotoxy(slp+3, stp+3+pointer);
+	gotoxy(slp+3, stp+5+pointer);
 	_putch(' ');
 
 	for (int i = 0; i < 2; i++) {
-		gotoxy(slp+4, stp+3+pointer);
+		gotoxy(slp+4, stp+5+pointer);
 		for (int j = 0; j < strlen(mapList[pointer]); j++)
 			_putch(' ');
 		Sleep(150);
 
-		gotoxy(slp+4, stp+3+pointer);
+		gotoxy(slp+4, stp+5+pointer);
 		printf("%s", mapList[pointer]);
 		Sleep(150);
 	}
 
-	Sleep(250);
+	Sleep(300);
 }
