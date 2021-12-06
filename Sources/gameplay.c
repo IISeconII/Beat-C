@@ -96,7 +96,10 @@ int readMap() {
 
 	if (FALLSPEED == 0) { // FALLSPEED를 명시하지 않았을 경우 BPM으로부터 추출 (16비트 기준)
 		const double bpm = (int)json_object_get_number(mapInfo, "bpm");
-		FALLSPEED = (int)round(60 / bpm / 4 * 1000);
+		if (bpm == 0)
+			FALLSPEED = 150; // 기본값
+		else
+			FALLSPEED = (int)round(60 / bpm / 4 * 1000);
 	}
 
 	// 노트 읽어서 map에 넣기
