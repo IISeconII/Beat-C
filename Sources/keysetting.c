@@ -13,6 +13,7 @@ void main_keysetting() {
 	memset(key, 0, sizeof(key));
 
 	setCursor(BLOCK);
+	setColor(WHITE);
 	gotoxy(klp + (boxWid-7)/2 - 1, ktp);
 	puts("키 설정");
 	for (int i = 0; i < LINE; i++) {

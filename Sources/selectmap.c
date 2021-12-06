@@ -146,6 +146,7 @@ int selecting(int mapCount)
 			case 's':
 				gotoxy(slp, stp+5+pointer); wprintf(L"¡¡");
 				main_keysetting();
+				setColor(WHITE);
 				gotoxy(slp, stp+5+pointer); wprintf(L"¢¹");
 				break;
 
