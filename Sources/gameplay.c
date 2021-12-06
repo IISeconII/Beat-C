@@ -128,6 +128,7 @@ int readMap() {
 void initBgm() {
 	// 음악 파일 경로 제작 ("maps/mapName/*.*")
 	const char* bgmName = json_object_get_string(mapInfo, "songFile");
+	if (bgmName == NULL) bgmName = "";
 	const int pathSize = (int)strlen(mapDir) + (int)strlen(bgmName) + 1;
 	char* bgmPath = malloc(pathSize);
 	if (bgmPath == NULL) return;
@@ -383,12 +384,12 @@ void hitNote(int line, int judgement) {
 	switch (judgement) {
 		case 1: // LATE
 		case 3: // FAST (200점에 66%)
-			score += 200 + (int)round(200 * combo / 100.0);
+			score += 200 + (int)round(200 * combo / 300.0);
 			accuracy = (accuracy * (noteCount-1) + 200/3.0) / noteCount;
 			updateUI(+1);
 			break;
 		case 2: // GOOD (300점에 100%)
-			score += 300 + (int)round(300 * combo / 100.0);
+			score += 300 + (int)round(300 * combo / 200.0);
 			accuracy = (accuracy * (noteCount-1) + 100) / noteCount;
 			updateUI(+1);
 			break;
