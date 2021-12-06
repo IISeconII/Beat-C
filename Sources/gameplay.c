@@ -211,6 +211,8 @@ void countdown() {
 	for (int i = 0; i < LINE * NOTETHK; i++) {
 		_putch(' ');
 	}
+
+	clearBuffer();
 }
 
 
@@ -247,7 +249,7 @@ void fallingNote() {
 				note[HEI-i][j] = note[HEI-(i+1)][j];
 
 				// 노트가 처음 판정선에 닿았을 때 BGM 재생
-				if (!songPlayed && i == 2 + json_object_get_number(mapInfo, "offset") && note[HEI - i][j] == N) {
+				if (!songPlayed && i == 2 + json_object_get_number(mapInfo, "offset") && note[HEI-i][j] == N) {
 					playBgm(0);
 					songPlayed = TRUE;
 				}
@@ -294,26 +296,28 @@ void fallingNote() {
 
 // 노트 + 맵을 콘솔 창에 출력한다.
 void showNotes() {
-	setColor(GREEN);
+
 	for (int i = 0; i < HEI; i++) {
 		gotoxy(glp, gtp + i);
+
 		for (int j = 0; j < LINE; j++) {
 			for (int k = 0; k < NOTETHK / 2; k++) {
-				wprintf(L"%ws", note[i][j] == N ? L"■" : L"  ");
-			}
-		}
-	}
 
-	// 판정선
-	setColor(WHITE);
-	for (int i = 0; i < LINE; i++) {
-		gotoxy(glp + i * NOTETHK, gtp + HEI - 2);
-		if (note[HEI-2][i] == x) {
-			for (int j = 0; j < NOTETHK / 2; j++) {
-				if (isPressed[i])
-					wprintf(L"▣");
-				else
-					wprintf(L"□");
+				if (note[i][j] == N) { // 노트
+					setColor(GREEN);
+					wprintf(L"■");
+				}
+				
+				else {
+					if (i == HEI-2) { // 판정선
+						setColor(WHITE);
+						wprintf(L"%c", isPressed[j] ? L'▣' : L'□');
+					}
+					
+					else { // 빈칸
+						wprintf(L"　");
+					}
+				}
 			}
 		}
 	}
@@ -330,17 +334,16 @@ void keyInput() {
 				if (!isPressed[i]) { // 누름
 
 					press(i);
+					isPressed[i] = TRUE;
 
 					setColor(WHITE);
 					gotoxy(glp + i * NOTETHK, gtp + HEI - 2);
 					for (int j = 0; j < NOTETHK / 2; j++)
 						wprintf(L"▣");
-
-					isPressed[i] = TRUE;
 				}
 			}
 
-			else { // 뗌
+			else if (isPressed[i]) { // 뗌
 
 				setColor(WHITE);
 				gotoxy(glp + i * NOTETHK, gtp + HEI - 2);
