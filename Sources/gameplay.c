@@ -32,13 +32,18 @@ void main_gameplay(char* _mapName) {
 	while (!_kbhit()) removingJudgeTxt();
 
 
+	playBgm(3);
 	for (int i = 0; i < mapLength; i++) free(map[i]); free(map);
 }
 
 
-// 변수 초기화 + cls
+// 변수 초기화 + BGM 준비 + cls
 void init()
 {
+	system("cls");
+	gotoxy(glp + LINE*NOTETHK/2 - 5, gtp + HEI / 2 - 1);
+	printf("Loading...");
+
 	mapIndex = 0;
 	songPlayed = FALSE;
 	gameEnd = FALSE;
@@ -50,8 +55,22 @@ void init()
 	memset(note, x, sizeof(note));
 	memset(shouldRemove, FALSE, LINE);
 	memset(isPressed, FALSE, LINE);
-	
-	system("cls");
+
+	// 음악 준비
+	/*const char* bgmName = json_object_get_string(mapInfo, "songFile");
+	const int pathSize = (int)strlen(mapDir) + (int)strlen(bgmName) + 1;
+	char* bgmPath = malloc(pathSize);
+	if (bgmPath == NULL) return;
+	sprintf_s(bgmPath, pathSize, "%s%s", mapDir, bgmName);*/
+
+	openBgm.lpstrElementName = L"maps/R8/R8.wav";
+	openBgm.lpstrDeviceType = L"mpegvideo";
+	mciSendCommandW(0, MCI_OPEN, MCI_OPEN_ELEMENT | MCI_OPEN_TYPE, (DWORD_PTR)(LPVOID)&openBgm); // 음악 로드
+	dwID = openBgm.wDeviceID;
+	mciSendCommandW(dwID, MCI_PLAY, MCI_NOTIFY, (DWORD_PTR)(LPVOID)&openBgm); // 음악 재생
+	playBgm(1);
+
+	//free(bgmPath);
 }
 
 // 노트 맵 파일을 읽어서 note에 저장한다.
@@ -164,8 +183,8 @@ void countdown() {
 		Sleep(500);
 	}
 
-	gotoxy(glp + LINE*NOTETHK/2 - 6, gtp + HEI / 2 - 1);
-	wprintf(L"Ｓｔａｒｔ！");
+	gotoxy(glp + LINE*NOTETHK/2 - 3, gtp + HEI / 2 - 1);
+	printf("Start!");
 	Sleep(500);
 
 	// 키
@@ -204,7 +223,7 @@ void fallingNote() {
 
 				// 노트가 처음 판정선에 닿았을 때 BGM 재생
 				if (!songPlayed && i == 2 + json_object_get_number(mapInfo, "offset") && note[HEI - i][j] == N) {
-					playSong();
+					playBgm(0);
 					songPlayed = TRUE;
 				}
 			}
@@ -402,6 +421,7 @@ void pause() {
 	if (!paused) {
 		paused = TRUE;
 		clock_t pauseStart = clock();
+		playBgm(1);
 
 		// 창 클리어
 		drawScreen();
@@ -414,23 +434,37 @@ void pause() {
 		paused = FALSE;
 		gotoxy(glp + LINE*NOTETHK/2 - 3, gtp + HEI/2-1); puts("      ");
 		countdown();
+		playBgm(2);
 		pauseTimer += clock() - pauseStart; // 일시정지 중이었던 시간을 빼줌
 	}
 }
 
 
-// 노래(BGM)를 재생한다.
-void playSong() {
-	/*const char* songName = json_object_get_string(mapInfo, "songFile");
-	const int pathSize = (int)strlen(mapDir) + (int)strlen(songName) + 1;
-	char* songPath = malloc(pathSize);
-	if (songPath == NULL) return;
-	sprintf_s(songPath, pathSize, "%s%s", mapDir, songName);*/
+// BGM을 재생한다.
+// 0: 재생, 1: 일시정지, 2: 일시정지 해제, 3: 정지
+void playBgm(int action) {
 
-	PlaySound(L"maps/R8/R8.wav", 0, SND_ASYNC); // 임시
-	gotoxy(30, 10); puts("play"); // debug
+	switch (action) {
+		case 0: // 음악 재생
+			mciSendCommandW(dwID, MCI_PLAY, MCI_NOTIFY, (DWORD_PTR)(LPVOID)&openBgm);
+			gotoxy(30, 10); puts("play  "); // debug
+			break;
 
-	//free(songPath);
+		case 1: // 음악 일시정지
+			mciSendCommandW(dwID, MCI_PAUSE, MCI_NOTIFY, (DWORD_PTR)(LPVOID)&openBgm);
+			gotoxy(30, 10); puts("pause "); // debug
+			break;
+
+		case 2: // 음악 일시정지 해제
+			mciSendCommandW(dwID, MCI_RESUME, MCI_NOTIFY, (DWORD_PTR)(LPVOID)&openBgm);
+			gotoxy(30, 10); puts("resume"); // debug
+			break;
+
+		case 3: // 음악 정지
+			mciSendCommandW(dwID, MCI_STOP, MCI_NOTIFY, (DWORD_PTR)(LPVOID)&openBgm); // 음악 정지
+			mciSendCommandW(dwID, MCI_SEEK, MCI_SEEK_TO_START, (DWORD_PTR)(LPVOID)NULL); //음원 재생 위치를 처음으로 초기화
+			break;
+	}
 }
 
 // 점수 & 콤보 UI 업데이트
