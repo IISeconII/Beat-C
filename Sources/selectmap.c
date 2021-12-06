@@ -45,7 +45,7 @@ int loadMaps() {
 	if (dir == NULL) {
 		dir = malloc(strlen(mapFolder)+2+1);
 		if (dir == NULL) return -1;
-		sprintf_s(dir, strlen(dir)+2+1, "%s/*", mapFolder);
+		sprintf_s(dir, strlen(mapFolder)+2+1, "%s/*", mapFolder);
 	}
 
 	// finddata ¼¼ÆÃ
