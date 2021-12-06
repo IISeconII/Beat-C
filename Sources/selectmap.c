@@ -2,31 +2,26 @@
 
 #include "selectmap.h"
 
-
 // 맵을 선택하는 씬
 char* main_selectmap() {
-	system("cls");
 	setCursor(HIDE);
+	system("cls");
 
-	gotoxy(slp, stp);
-	puts("곡을 선택하세요.");
-	
 	mapCount = 0;
 	if (loadMaps() == -1) return NULL;
 	
-	if (mapCount == 0) {
+	if (mapCount == 0 || showMapList() == -1) {
 		system("cls");
-		for (int i = 0; i < sizeof(mapGuideDocs) / sizeof(mapGuideDocs[0]); i++) {
-			gotoxy(slp, stp+i); puts(mapGuideDocs[i]);
-		}
+		setColor(GRAY);
+		gotoxy(slp, stp); puts(":( 맵이 없네요..");
+		gotoxy(slp, stp+3); puts("맵 제작법은 맵_제작법.md 파일을 참조하세요.");
+		gotoxy(slp, stp+4); setCursor(UNDERBAR);
 
 		while (1);
 	}
 
 	else {
-		setColor(GRAY);
-		gotoxy(8, 13); printf("키를 설정하려면 ");
-		gotoxy(8, 14); wprintf(L"Ｓ키를 누르세요");
+		
 	}
 
 	int pointer = selecting(mapCount);
@@ -82,6 +77,18 @@ int loadMaps() {
 
 	_findclose(handle);
 
+	return 0;
+}
+
+// 맵 리스트 화면에 띄우기
+int showMapList() {
+
+	// 안내
+	setColor(GRAY);
+	gotoxy(slp, stp); puts("곡을 선택하세요.");
+	gotoxy(8, 13); printf("키를 설정하려면 ");
+	gotoxy(8, 14); wprintf(L"Ｓ키를 누르세요");
+
 
 	// 하이스코어 데이터 열기 (없으면 생성)
 	const char* highScoreFileName = "stats.dat";
@@ -97,14 +104,12 @@ int loadMaps() {
 	}
 	JSON_Object* highScore = json_value_get_object(rootValue);
 
-
 	// 리스트 & 점수 화면에 띄우기
-	setColor(YELLOW); gotoxy(slp+3, stp+3);
-	printf("곡");
-	setColor(GREEN); gotoxy(slp+3+30, stp+3);
-	printf("하이스코어");
-	setColor(DARK_GRAY); gotoxy(slp+2, stp+4);
-	wprintf(L"──────────────────────────────────────────");
+	setColor(GRAY);
+	gotoxy(slp+3, stp+3); printf("곡");
+	gotoxy(slp+3+30, stp+3); printf("하이스코어");
+	setColor(DARK_GRAY);
+	gotoxy(slp+2, stp+4); wprintf(L"──────────────────────────────────────────");
 
 	for (int i = 0; i < mapCount; i++) {
 		setColor(YELLOW);
@@ -115,6 +120,7 @@ int loadMaps() {
 
 	return 0;
 }
+
 
 // 맵 리스트에서 맵 선택하기
 int selecting(int mapCount)
