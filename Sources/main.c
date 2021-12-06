@@ -6,6 +6,8 @@
 main() {
 
 	setlocale(LC_ALL, "");
+	SetConsoleTitle(L"Beat-C");
+	setColor(WHITE);
 
 	main_keysetting();
 

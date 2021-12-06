@@ -57,7 +57,9 @@ void main_keysetting() {
 		}
 
 		gotoxy(klp + i*gap - 1, ktp + 4);
+		setColor(SKYBLUE);
 		wprintf(L"%s", keyName[i]);
+		setColor(WHITE);
 		
 		key[i] = k;
 
@@ -68,10 +70,13 @@ void main_keysetting() {
 	// 깜빡깜빡
 	Sleep(180);
 	for (int r = 0; r < 2; r++) {
+		setColor(WHITE);
 		for (int i = 0; i < LINE; i++) {
 			gotoxy(klp + i*gap - 1, ktp + 4); wprintf(L" ― ");
 		}
 		Sleep(110);
+
+		setColor(SKYBLUE);
 		for (int i = 0; i < LINE; i++) {
 			gotoxy(klp + i*gap - 1, ktp + 4); wprintf(L"%s", keyName[i]);
 		}

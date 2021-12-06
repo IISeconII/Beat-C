@@ -17,7 +17,7 @@ void movexy(int x, int y) {
 }
 
 // 커서 모양을 변경한다.
-void setCursor(CURSOR_TYPE curType) {
+void setCursor(enum CURSOR_TYPE curType) {
 	static CONSOLE_CURSOR_INFO CurInfo = {0,};
 
 	switch (curType) {
@@ -57,4 +57,9 @@ void clearBuffer() {
 	while (_kbhit()) {
 		int _ = _getch();
 	}
+}
+
+// 콘솔 텍스트 색상 변경해주는 함수
+void setColor(enum Colors color) {
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), color);
 }
