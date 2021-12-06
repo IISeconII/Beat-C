@@ -1,6 +1,5 @@
+# 임시 폴더
 .vs
-
-# 임시 빌드 폴더
 Debug
 x64
 Release
@@ -10,6 +9,3 @@ Release
 
 # 사용자 데이터
 maps/stats.dat
-
-# PPT 작성 중
-*.pptx
