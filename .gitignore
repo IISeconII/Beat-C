@@ -10,3 +10,6 @@ Release
 
 # 사용자 데이터
 maps/stats.dat
+
+# PPT 작성 중
+*.pptx
