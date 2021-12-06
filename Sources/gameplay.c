@@ -49,6 +49,7 @@ void init()
 	pauseTimer = 0;
 	memset(note, x, sizeof(note));
 	memset(shouldRemove, FALSE, LINE);
+	memset(isPressed, FALSE, LINE);
 	
 	system("cls");
 }
@@ -119,6 +120,7 @@ int readMap() {
 void drawScreen() {
 
 	// 박스
+	setColor(GRAY);
 	for (int i = 0; i <= HEI; i++) {
 		gotoxy(glp - 1, gtp + i);
 
@@ -126,7 +128,9 @@ void drawScreen() {
 
 		for (int j = 0; j < LINE * NOTETHK; j++) {
 			if (i == HEI-2) {
+				setColor(WHITE);
 				wprintf(L"□"); j++; // 판정선
+				setColor(GRAY);
 			}
 			else if (i == HEI) {
 				_putch('^'); // 데드라인
@@ -140,12 +144,14 @@ void drawScreen() {
 	}
 
 	// 키
+	setColor(SKYBLUE);
 	for (int i = 0; i < LINE; i++) {
 		gotoxy(glp + i * NOTETHK + 1, gtp + HEI + 2);
 		wprintf(L"%s", keyName[i]);
 	}
 
 	// 곡 제목
+	setColor(YELLOW);
 	gotoxy(glp - 6 - (int)strlen(mapName), gtp + 1);
 	printf("< %s >", mapName);
 }
@@ -153,13 +159,13 @@ void drawScreen() {
 // 카운트다운
 void countdown() {
 	for (int i = 3; i >= 1; i--) {
-		gotoxy(glp + LINE*NOTETHK/2, gtp + HEI/2-1); // 맵 중앙
-		printf("%d", i);
+		gotoxy(glp + LINE*NOTETHK/2 - 1, gtp + HEI/2-1); // 맵 중앙
+		wprintf(L"%c", i + '0' + 0xFEE0);
 		Sleep(500);
 	}
 
-	gotoxy(glp + LINE*NOTETHK/2 - 3, gtp + HEI / 2 - 1);
-	puts("Start!");
+	gotoxy(glp + LINE*NOTETHK/2 - 6, gtp + HEI / 2 - 1);
+	wprintf(L"Ｓｔａｒｔ！");
 	Sleep(500);
 
 	// 키
@@ -181,7 +187,7 @@ void fallingNote() {
 	// 모든 노트가 만들어지고 좀 있다가 게임을 종료시키기 위한 타이머
 	static clock_t endTimer = 0;
 	static BOOL end = FALSE;
-
+	
 	if (clock() - (timer + pauseTimer) >= runtime) {
 
 		// miss 노트 검사
@@ -244,6 +250,7 @@ void fallingNote() {
 
 // 노트 + 맵을 콘솔 창에 출력한다.
 void showNotes() {
+	setColor(GREEN);
 	for (int i = 0; i < HEI; i++) {
 		gotoxy(glp, gtp + i);
 		for (int j = 0; j < LINE; j++) {
@@ -254,6 +261,7 @@ void showNotes() {
 	}
 
 	// 판정선
+	setColor(WHITE);
 	for (int i = 0; i < LINE; i++) {
 		gotoxy(glp + i * NOTETHK, gtp + HEI - 2);
 		if (note[HEI-2][i] == x) {
@@ -271,11 +279,15 @@ void showNotes() {
 void keyInput() {
 
 	if (_kbhit()) {
+
+		// 노트 키
 		for (int i = 0; i < LINE; i++) {
 			if (GetAsyncKeyState(key[i])) {
 				if (!isPressed[i]) { // 누름
+
 					press(i);
 
+					setColor(WHITE);
 					gotoxy(glp + i * NOTETHK, gtp + HEI - 2);
 					for (int j = 0; j < NOTETHK / 2; j++)
 						wprintf(L"▣");
@@ -283,7 +295,10 @@ void keyInput() {
 					isPressed[i] = TRUE;
 				}
 			}
+
 			else { // 뗌
+
+				setColor(WHITE);
 				gotoxy(glp + i * NOTETHK, gtp + HEI - 2);
 				for (int j = 0; j < NOTETHK / 2; j++)
 					if (note[HEI-2][i] == x)
@@ -292,18 +307,12 @@ void keyInput() {
 				isPressed[i] = FALSE;
 			}
 		}
-	}
 
-	/*static int k;
-	if (_kbhit()) {
-		k = _getch();
-		if (k == 0xE0 || k == 0)
-			k = _getch();
-
-		switch (k) {
-			case ESC: pause(); break; // ESC -> 일시정지
+		// ESC 누르면 일시정지
+		if (GetAsyncKeyState(VK_ESCAPE) & 0x8000) {
+			pause();
 		}
-	}*/
+	}
 }
 
 // key가 눌렸을 때 호출된다.
@@ -333,9 +342,9 @@ void hitNote(int line, int judgement) {
 	// 점수, 정확도
 	switch (judgement) {
 		case 1: // LATE
-		case 3: // FAST (200점에 75%)
+		case 3: // FAST (200점에 66%)
 			score += 200 + (int)round(200 * combo / 100.0);
-			accuracy = (accuracy * (noteCount-1) + 75) / noteCount;
+			accuracy = (accuracy * (noteCount-1) + 200/3.0) / noteCount;
 			updateUI(+1);
 			break;
 		case 2: // GOOD (300점에 100%)
@@ -355,10 +364,10 @@ void hitNote(int line, int judgement) {
 	// 판정 텍스트
 	gotoxy(glp + line*NOTETHK+1, gtp + HEI+1);
 	switch (judgement) {
-		case 1: puts("LATE"); break;
-		case 2: puts("GOOD"); break;
-		case 3: puts("FAST"); break;
-		case 4: case -1: puts("miss"); break;
+		case 1:          setColor(DARK_YELLOW); puts("LATE"); break;
+		case 2:          setColor(DARK_GREEN);  puts("GOOD"); break;
+		case 3:          setColor(DARK_YELLOW); puts("FAST"); break;
+		case 4: case -1: setColor(DARK_GRAY); puts("miss"); break;
 	}
 	shouldRemove[line] = 1;
 
@@ -399,12 +408,8 @@ void pause() {
 		gotoxy(glp + LINE*NOTETHK/2 - 3, gtp + HEI/2-1); puts("Paused");
 
 		// ESC를 누를 때까지 대기
-		int k = 0;
-		while (k != ESC) {
-			k = _getch();
-			if (k == 0xE0 || k == 0)
-				k = _getch();
-		}
+		while (GetAsyncKeyState(VK_ESCAPE)) removingJudgeTxt();
+		while (!GetAsyncKeyState(VK_ESCAPE)) removingJudgeTxt();
 		
 		paused = FALSE;
 		gotoxy(glp + LINE*NOTETHK/2 - 3, gtp + HEI/2-1); puts("      ");
@@ -433,36 +438,39 @@ void playSong() {
 void updateUI(int comboPlus) {
 
 	// 점수
-	gotoxy(glp + LINE * NOTETHK + 2, gtp);
-	printf("Score: %d", score);
+	gotoxy(glp + LINE*NOTETHK + 2, gtp+1);
+	setColor(GRAY);  printf("Score: ");
+	setColor(GREEN); printf("%d", score);
 
 	// 콤보
-	if (comboPlus == 1) {
+	if (comboPlus == 1)
 		combo++;
-	} else if (comboPlus == -1) {
+	else if (comboPlus == -1)
 		combo = 0;
-	}
-	gotoxy(glp + LINE*NOTETHK + 2, gtp + 2);
-	printf("Combo: %-4d", combo);
+	gotoxy(glp + LINE*NOTETHK + 2, gtp+3);
+	setColor(GRAY);  printf("Combo: ");
+	setColor(WHITE); printf("%-4d", combo);
 
 	// 정확도
-	gotoxy(glp + LINE * NOTETHK + 2, gtp + 4);
-	printf("Accuracy: %-3.3f%%", accuracy);
-
-	// [debug] noteCount
-	/*gotoxy(glp + LINE * NOTETHK + 2, gtp + 6);
-	printf("%d", noteCount);*/
+	gotoxy(glp + LINE*NOTETHK + 2, gtp+5);
+	setColor(GRAY);   printf("Accuracy: ");
+	setColor(YELLOW); printf("%-3.3f%% ", accuracy);
 }
 
 
 // 기록 띄우기
 void showStats() {
 	gotoxy(glp + 1, gtp + HEI/2-3);
-	printf("%s 플레이 결과", mapName);
+	setColor(YELLOW); printf("%s", mapName);
+	setColor(GRAY);   printf(" 플레이 결과");
 	gotoxy(glp + 1, gtp + HEI/2-1);
-	printf("점수: %d점", score);
+	setColor(GRAY);  printf("점수: ");
+	setColor(GREEN); printf("%d", score);
 	gotoxy(glp + 1, gtp + HEI/2);
-	printf("정확도: %.3f%%", accuracy);
+	setColor(GRAY);   printf("정확도: ");
+	setColor(YELLOW); printf("%.3f%%", accuracy);
+
+	setColor(GRAY);
 	gotoxy(glp + 1, gtp + HEI/2+2);
 	printf("메인 화면으로 돌아가려면");
 	gotoxy(glp + 1, gtp + HEI/2+3);
