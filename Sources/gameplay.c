@@ -17,22 +17,26 @@ void main_gameplay(char* _mapName) {
 		return;
 	}
 
+	initBgm();
 	drawScreen();
 	countdown();
 	updateUI(0);
 
-	while (!gameEnd) {
-		fallingNote();
-		keyInput();
+	while (!gameEnd && !quit) {
 		removingJudgeTxt();
+		keyInput();
+		fallingNote();
+		// 순서는 상관 없지만 keyInput 다음에 fallingNote가 오도록 하세요 (quit 때문)
 	}
 
 	clearBuffer();
-	showStats();
-	while (!_kbhit()) removingJudgeTxt();
-
+	if (!quit) {
+		showStats();
+		while (!_kbhit()) removingJudgeTxt();
+	}
 
 	playBgm(3);
+	free(mapDir);
 	for (int i = 0; i < mapLength; i++) free(map[i]); free(map);
 }
 
@@ -45,8 +49,10 @@ void init()
 	printf("Loading...");
 
 	mapIndex = 0;
+	paused = FALSE;
 	songPlayed = FALSE;
 	gameEnd = FALSE;
+	quit = FALSE;
 	score = 0;
 	combo = 0;
 	accuracy = 100;
@@ -55,22 +61,6 @@ void init()
 	memset(note, x, sizeof(note));
 	memset(shouldRemove, FALSE, LINE);
 	memset(isPressed, FALSE, LINE);
-
-	// 음악 준비
-	/*const char* bgmName = json_object_get_string(mapInfo, "songFile");
-	const int pathSize = (int)strlen(mapDir) + (int)strlen(bgmName) + 1;
-	char* bgmPath = malloc(pathSize);
-	if (bgmPath == NULL) return;
-	sprintf_s(bgmPath, pathSize, "%s%s", mapDir, bgmName);*/
-
-	openBgm.lpstrElementName = L"maps/R8/R8.wav";
-	openBgm.lpstrDeviceType = L"mpegvideo";
-	mciSendCommandW(0, MCI_OPEN, MCI_OPEN_ELEMENT | MCI_OPEN_TYPE, (DWORD_PTR)(LPVOID)&openBgm); // 음악 로드
-	dwID = openBgm.wDeviceID;
-	mciSendCommandW(dwID, MCI_PLAY, MCI_NOTIFY, (DWORD_PTR)(LPVOID)&openBgm); // 음악 재생
-	playBgm(1);
-
-	//free(bgmPath);
 }
 
 // 노트 맵 파일을 읽어서 note에 저장한다.
@@ -130,8 +120,33 @@ int readMap() {
 
 	// 정리
 	fclose(f);
-	free(mapDir); free(infoPath); free(notePath);
+	free(infoPath); free(notePath);
 	return 0;
+}
+
+// 음악 재생 준비
+void initBgm() {
+	// 음악 파일 경로 제작 ("maps/mapName/*.*")
+	const char* bgmName = json_object_get_string(mapInfo, "songFile");
+	const int pathSize = (int)strlen(mapDir) + (int)strlen(bgmName) + 1;
+	char* bgmPath = malloc(pathSize);
+	if (bgmPath == NULL) return;
+	sprintf_s(bgmPath, pathSize, "%s%s", mapDir, bgmName);
+
+	// wide char로 변환
+	const int bgmPathWSize = MultiByteToWideChar(CP_ACP, 0, bgmPath, -1, NULL, 0);
+	wchar_t* bgmPathW = malloc(bgmPathWSize * sizeof(wchar_t));
+	MultiByteToWideChar(CP_ACP, 0, bgmPath, (int)strlen(bgmPath)+1, bgmPathW, bgmPathWSize);
+
+	// 음악 로드
+	openBgm.lpstrElementName = bgmPathW;
+	openBgm.lpstrDeviceType = L"mpegvideo";
+	mciSendCommandW(0, MCI_OPEN, MCI_OPEN_ELEMENT | MCI_OPEN_TYPE, (DWORD_PTR)(LPVOID)&openBgm); // 음악 열기
+	dwID = openBgm.wDeviceID;
+	mciSendCommandW(dwID, MCI_PLAY, MCI_NOTIFY, (DWORD_PTR)(LPVOID)&openBgm); // 음악 재생
+	playBgm(1); // 바로 일시정지
+
+	free(bgmPath);
 }
 
 
@@ -207,6 +222,12 @@ void fallingNote() {
 	static clock_t endTimer = 0;
 	static BOOL end = FALSE;
 	
+	if (quit) {
+		timer = 0;
+		runtime = 0;
+		return;
+	}
+
 	if (clock() - (timer + pauseTimer) >= runtime) {
 
 		// miss 노트 검사
@@ -425,11 +446,20 @@ void pause() {
 
 		// 창 클리어
 		drawScreen();
+		setColor(GRAY);
 		gotoxy(glp + LINE*NOTETHK/2 - 3, gtp + HEI/2-1); puts("Paused");
+		gotoxy(glp, gtp + HEI/2+1); puts("ESC를 눌러서 계속 플레이");
+		gotoxy(glp, gtp + HEI/2+2); puts("Q를 눌러서 맵 나가기");
 
 		// ESC를 누를 때까지 대기
 		while (GetAsyncKeyState(VK_ESCAPE)) removingJudgeTxt();
-		while (!GetAsyncKeyState(VK_ESCAPE)) removingJudgeTxt();
+		while (!GetAsyncKeyState(VK_ESCAPE)) {
+			if (GetAsyncKeyState('Q')) {
+				quit = TRUE;
+				return;
+			}
+			removingJudgeTxt();
+		}
 		
 		paused = FALSE;
 		gotoxy(glp + LINE*NOTETHK/2 - 3, gtp + HEI/2-1); puts("      ");
@@ -447,17 +477,14 @@ void playBgm(int action) {
 	switch (action) {
 		case 0: // 음악 재생
 			mciSendCommandW(dwID, MCI_PLAY, MCI_NOTIFY, (DWORD_PTR)(LPVOID)&openBgm);
-			gotoxy(30, 10); puts("play  "); // debug
 			break;
 
 		case 1: // 음악 일시정지
 			mciSendCommandW(dwID, MCI_PAUSE, MCI_NOTIFY, (DWORD_PTR)(LPVOID)&openBgm);
-			gotoxy(30, 10); puts("pause "); // debug
 			break;
 
 		case 2: // 음악 일시정지 해제
 			mciSendCommandW(dwID, MCI_RESUME, MCI_NOTIFY, (DWORD_PTR)(LPVOID)&openBgm);
-			gotoxy(30, 10); puts("resume"); // debug
 			break;
 
 		case 3: // 음악 정지

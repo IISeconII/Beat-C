@@ -24,7 +24,7 @@ const int gtp = 0; // gameplay top padding
 
 
 char* mapName; // 맵 이름
-char* mapDir; // 맵 폴더 경로
+char* mapDir; // 맵 폴더 경로 ("maps/mapName/")
 JSON_Object* mapInfo; // info.json 데이터
 char** map; // 맵 (노트가 나오는 패턴)
 int mapLength; // 패턴의 길이 (map의 행 개수)
@@ -43,6 +43,7 @@ double accuracy; // 정확도
 BOOL paused; // 일시정지 됐는가?
 BOOL songPlayed; // BGM이 재생됐는가?
 BOOL gameEnd; // 게임이 끝났는가?
+BOOL quit; // 맵을 중간에 끝내고 나가려고 하는가?
 
 // 판정 텍스트를 지워야 하는가? (removingJudgeTxt() 참조)
 // 0: false, 1: 제거 신호, 2: 제거 타이머 작동 중
@@ -63,6 +64,7 @@ void main_gameplay(char* _mapName);
 
 void init();
 int readMap();
+void initBgm();
 
 void drawScreen();
 void countdown();
