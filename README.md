@@ -16,6 +16,8 @@
 
 [**README.pdf**](https://github.com/Secon0101/Beat-C/blob/main/README.pdf)도 참조하세요.
 
+다운로드는 [**Release**](https://github.com/Secon0101/Beat-C/releases/tag/beta)에 있습니다.
+
 <br>
 
 ## 플레이 방법
