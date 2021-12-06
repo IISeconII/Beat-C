@@ -463,7 +463,7 @@ void pause() {
 		}
 		
 		paused = FALSE;
-		gotoxy(glp + LINE*NOTETHK/2 - 3, gtp + HEI/2-1); puts("      ");
+		drawScreen();
 		countdown();
 		playBgm(2);
 		pauseTimer += clock() - pauseStart; // 일시정지 중이었던 시간을 빼줌
