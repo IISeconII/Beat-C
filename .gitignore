@@ -6,7 +6,7 @@ x64
 Release
 
 # 음악 저작권
-*.wav
+*.mp3
 
 # 사용자 데이터
 maps/stats.dat
