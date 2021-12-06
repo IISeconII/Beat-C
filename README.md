@@ -12,6 +12,8 @@
 - **C언어**를 이용한 **콘솔 게임**입니다.
 - 커스텀 맵을 만들 수 있고 여러 개의 맵 중 하나를 골라서 플레이할 수 있습니다.
 
+[**README.pdf**](https://github.com/Secon0101/Beat-C/blob/main/README.pdf)도 참조하세요.
+
 <br>
 
 ## 플레이 방법
@@ -26,7 +28,7 @@
 <br>
 
 ## 맵 제작법
-
+[**맵_제작법.md**](https://github.com/Secon0101/Beat-C/blob/main/맵_제작법.md) 문서를 참고하세요.
 
 <br>
 
